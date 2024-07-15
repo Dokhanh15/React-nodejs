@@ -1,9 +1,7 @@
 import {
-  Alert,
   Button,
   Container,
   Paper,
-  Snackbar,
   Stack,
   Table,
   TableBody,
@@ -11,7 +9,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
+  Typography
 } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -89,7 +87,7 @@ function AdminProductList() {
                     <TableCell align="right">{product.price}</TableCell>
                     <TableCell align="right">{product.description}</TableCell>
                     <TableCell align="right">{product.image}</TableCell>
-                    <TableCell align="right">{product.category.name}</TableCell>
+                    {/* <TableCell align="right">{product.category.name}</TableCell> */}
                     <TableCell align="right">
                       <Stack
                         direction={"row"}

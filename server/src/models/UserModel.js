@@ -20,6 +20,9 @@ const UserSchema = new Schema(
       type: String,
       default: "member",
     },
+    confirmPassword: {
+      type: String,  
+    },
   },
   {
     timestamps: true,

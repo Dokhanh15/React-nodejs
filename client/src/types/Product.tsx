@@ -6,6 +6,10 @@ export type Product = {
   description: string;
   category: Category;
   isShow: boolean;
+  rating: {
+    count: number,
+    rate: number,
+  };
 };
 
 export type Category = {
