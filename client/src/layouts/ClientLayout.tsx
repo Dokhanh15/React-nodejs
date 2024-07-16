@@ -7,7 +7,7 @@ const ClientLayout = () => {
   return (
     <Stack>
       <Header />
-      <Stack mt={15}>
+      <Stack mt={25} >
         <Outlet />
       </Stack>
       <Footer />
