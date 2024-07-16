@@ -64,15 +64,15 @@ function AdminProductList() {
             <Button variant="contained">Add Product</Button>
           </Link>
           <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 1200 }} aria-label="simple table">
+            <Table sx={{ minWidth: 1000, textAlign: 'center' }} aria-label="simple table">
               <TableHead>
                 <TableRow>
                   <TableCell>Title</TableCell>
                   <TableCell align="right">Price</TableCell>
                   <TableCell align="right">Desc</TableCell>
-                  <TableCell align="right">Image</TableCell>
+                  <TableCell align="center">Image</TableCell>
                   <TableCell align="right">Category</TableCell>
-                  <TableCell align="right">Actions</TableCell>
+                  <TableCell align="center">Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -86,15 +86,19 @@ function AdminProductList() {
                     </TableCell>
                     <TableCell align="right">{product.price}</TableCell>
                     <TableCell align="right">{product.description}</TableCell>
-                    <TableCell align="right">{product.image}</TableCell>
-                    {/* <TableCell align="right">{product.category.name}</TableCell> */}
-                    <TableCell align="right">
+                    <TableCell align="center">{product.image}</TableCell>
+                    <TableCell align="right">{product.category}</TableCell>
+                    <TableCell align="center">
                       <Stack
                         direction={"row"}
                         gap={3}
                         justifyContent={"center"}
                       >
-                        <Link to={""}>Edit</Link>
+                        <Link to={`/admin/product/edit/${product._id}`}>
+                          <Button variant="contained" sx={{ bgcolor: "blue" }}>
+                            Edit
+                          </Button>
+                        </Link>
                         <Button
                           variant="contained"
                           sx={{ bgcolor: "red" }}

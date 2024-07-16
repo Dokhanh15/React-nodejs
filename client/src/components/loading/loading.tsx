@@ -9,7 +9,7 @@ const Loading: FC<LoadingProps> = ({ isShow }) => {
   return (
     <>
       {isShow && (
-        <Box sx={{ width: "100%"}} >
+        <Box sx={{ width: "100%" }} >
           <LinearProgress />
         </Box>
       )}

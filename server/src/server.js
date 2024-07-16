@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-const dbUrl = process.env.DB_URI || 3000;
+const dbUrl = process.env.DB_URI || "mongodb://localhost:27017/React_nodejs";
 connectMongoDB(dbUrl);
 
 app.use("/", router);
