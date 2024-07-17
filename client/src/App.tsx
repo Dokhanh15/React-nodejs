@@ -2,7 +2,6 @@ import { Navigate, useRoutes } from "react-router-dom";
 import AdminLayout from "./layouts/AdminLayout";
 import AdminProductList from "./pages/admin/product/List";
 import AdminProductAdd from "./pages/admin/product/Add";
-import AdminProductEdit from "./pages/admin/product/Edit";
 import ClientLayout from "./layouts/ClientLayout";
 import Homepage from "./pages/client/Homepage";
 import Detail from "./pages/client/Detail";
@@ -10,6 +9,9 @@ import Register from "./pages/client/Register";
 import Login from "./pages/client/Login";
 import Addcate from "./pages/admin/category/Addcate";
 import Listcate from "./pages/admin/category/Listcate";
+import AdminProductUpdate from "./pages/admin/product/Edit";
+import { UserProvider } from "./pages/client/userContext/userContext";
+import NotFound from "./components/404!/Notfound";
 
 const routeConfig = [
   {
@@ -53,7 +55,7 @@ const routeConfig = [
       },
       {
         path: "product/edit/:id",
-        element: <AdminProductEdit />,
+        element: <AdminProductUpdate />,
       },
       {
         path: "category/add",
@@ -65,12 +67,20 @@ const routeConfig = [
       },
     ],
   },
+  {
+    path: '/404',
+    element: <NotFound/>
+  },
+  {
+    path: '*',
+    element: <NotFound/>
+  }
 ];
 
 function App() {
   const routes = useRoutes(routeConfig);
 
-  return <main>{routes}</main>;
+  return <UserProvider>{routes}</UserProvider>;
 }
 
 export default App;

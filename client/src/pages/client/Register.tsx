@@ -58,7 +58,7 @@ import { Users } from "src/types/user";
     return (
       <Container maxWidth="sm">
         <Loading isShow={loading} />
-        <Typography variant="h3" textAlign="center" mb={2}>
+        <Typography variant="h3" textAlign="center" mb={2} mt={10}>
           Đăng Ký
         </Typography>
         <form onSubmit={handleSubmit(onSubmit)}>
