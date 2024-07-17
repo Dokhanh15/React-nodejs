@@ -1,5 +1,8 @@
-
-import { Container, Stack, Typography } from "@mui/material";
+import {
+  Container,
+  Stack,
+  Typography,
+} from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -11,24 +14,26 @@ function AdminProductEdit() {
   const { id } = useParams();
   const [product, setProduct] = useState<Product | undefined>();
 
-  const getProduct = async (id: string) => {
-    try {
-      const { data } = await axios.get(`http://localhost:3000/products/${id}`);
-      setProduct(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
   useEffect(() => {
-    if (!id) return;
-    getProduct(id);
+    const fetchProduct = async () => {
+      try {
+        const { data } = await axios.get(`/products/${id}`);
+        setProduct(data);
+      } catch (error) {
+        console.log("Error fetching product", error);
+      }
+    };
+
+    fetchProduct();
   }, [id]);
 
   const onSubmit = async (values: ProductFormParams) => {
     try {
       await axios.put(`/products/${id}`, values);
       nav("/admin/product/list");
-    } catch (error) { }
+    } catch (error) {
+      console.error("Error updating product:", error);
+    }
   };
 
   return (
@@ -36,9 +41,13 @@ function AdminProductEdit() {
       <Container>
         <Stack gap={2}>
           <Typography variant="h3" textAlign={"center"}>
-            Edit Product
+            Chỉnh Sửa Sản Phẩm
           </Typography>
-          <ProductForm onSubmit={onSubmit} initialValues={product} />
+          {product ? (
+            <ProductForm onSubmit={onSubmit} initialValues={product} isEdit />
+          ) : (
+            <Typography variant="body1">Loading...</Typography>
+          )}
         </Stack>
       </Container>
     </>
@@ -46,4 +55,3 @@ function AdminProductEdit() {
 }
 
 export default AdminProductEdit;
-

@@ -33,16 +33,16 @@ export default function ConfirmDialog({
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">{"Xoas SP"}</DialogTitle>
+      <DialogTitle id="alert-dialog-title">{"Xóa Sản Phẩm"}</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
-          Ban co muon xoa san pham nay ko?
+          Bạn có muốn xóa sản phẩm này không?
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <ButtonCancel onClick={handleClose}>Cancel</ButtonCancel>
+        <ButtonCancel onClick={handleClose}>Hủy</ButtonCancel>
         <ButtonOk onClick={handleAgree} autoFocus>
-          OK
+          Đồng ý
         </ButtonOk>
       </DialogActions>
     </Dialog>

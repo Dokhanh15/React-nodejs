@@ -42,7 +42,7 @@ class ProductsController {
         req.params.id,
         req.body,
         { new: true }
-      );
+      ).populate("category");
       if (!updateProduct) throw new ApiError(404, "Product Not Found");
 
       res.status(StatusCodes.OK).json({
