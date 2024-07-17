@@ -41,7 +41,7 @@ function AdminProductEdit() {
       <Container>
         <Stack gap={2}>
           <Typography variant="h3" textAlign={"center"}>
-            Chỉnh Sửa Sản Phẩm
+            Sửa Sản Phẩm
           </Typography>
           {product ? (
             <ProductForm onSubmit={onSubmit} initialValues={product} isEdit />

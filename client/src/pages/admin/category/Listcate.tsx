@@ -17,6 +17,9 @@ import { Link } from 'react-router-dom';
 import ConfirmDialog from 'src/components/ConfirmDialog';
 import Flash from 'src/components/Flash';
 import { Category } from 'src/types/Product';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 const Listcate: React.FC = () => {
   const [showFlash, setShowFlash] = useState(false);
@@ -57,19 +60,21 @@ const Listcate: React.FC = () => {
       <Flash isShow={showFlash} />
       <Stack gap={2}>
         <Typography variant="h2" textAlign="center">
-          Category List
+          Danh sách danh mục
         </Typography>
         <Link to="/admin/category/add">
-          <Button variant="contained">Add Category</Button>
+          <Button variant="contained" color='primary'>
+            <AddIcon /> Thêm danh mục
+          </Button>
         </Link>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 800 }} aria-label="simple table">
             <TableHead>
               <TableRow>
                 <TableCell>ID</TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Description</TableCell>
-                <TableCell align="center">Actions</TableCell>
+                <TableCell>Tên danh mục</TableCell>
+                <TableCell>Mô tả</TableCell>
+                <TableCell align="center"></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -86,16 +91,16 @@ const Listcate: React.FC = () => {
                   <TableCell align="center">
                     <Stack direction="row" gap={3} justifyContent="center">
                       <Link to={`/admin/category/edit/${category._id}`}>
-                        <Button variant="contained" sx={{ bgcolor: "#f9a825" }}>
-                          Edit
+                        <Button variant="contained" color='warning'>
+                          <EditIcon /> Sửa
                         </Button>
                       </Link>
                       <Button
                         variant="contained"
-                        sx={{ bgcolor: 'red' }}
+                        color='error'
                         onClick={() => handleConfirm(category._id)}
                       >
-                        Delete
+                        <DeleteForeverIcon /> Xóa
                       </Button>
                     </Stack>
                   </TableCell>

@@ -3,7 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Loading from "src/components/loading/loading";
 import { Product } from "src/types/Product";
-import SnackbarAlert from "./snackbar/Snackbar";
+import SnackbarAlert from "../../components/snackbar/Snackbar";
 import { Link } from "react-router-dom";
 import ListProduct from "./Listproducts";
 

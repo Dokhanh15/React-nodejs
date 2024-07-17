@@ -17,6 +17,9 @@ import { Link } from "react-router-dom";
 import ConfirmDialog from "src/components/ConfirmDialog";
 import Flash from "src/components/Flash";
 import { Product } from "src/types/Product";
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 function AdminProductList() {
   const [showFlash, setShowFlash] = useState(false);
@@ -24,7 +27,7 @@ function AdminProductList() {
   const [products, setProducts] = useState<Product[]>([]);
   const [idDelete, setIdDelete] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [productsPerPage] = useState<number>(8); // Số sản phẩm trên mỗi trang, bạn có thể thay đổi tại đây
+  const [productsPerPage] = useState<number>(4); // Số sản phẩm trên mỗi trang, bạn có thể thay đổi tại đây
 
   const getAllProduct = async () => {
     try {
@@ -66,10 +69,6 @@ function AdminProductList() {
   // Chuyển đến trang sản phẩm khác
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
-  // Loại bỏ xác nhận xóa sản phẩm
-  const handleCancel = () => {
-    setConfirm(false);
-  };
 
   return (
     <>
@@ -77,10 +76,12 @@ function AdminProductList() {
         <Flash isShow={showFlash} />
         <Stack gap={2}>
           <Typography variant="h2" textAlign={"center"}>
-            Product List
+            Danh sách sản phẩm
           </Typography>
           <Link to="/admin/product/add">
-            <Button variant="contained">Add Product</Button>
+            <Button variant="contained" color="primary">
+              <AddIcon /> Thêm sản phẩm
+            </Button>
           </Link>
           <TableContainer component={Paper}>
             <Table
@@ -89,12 +90,12 @@ function AdminProductList() {
             >
               <TableHead>
                 <TableRow>
-                  <TableCell>Title</TableCell>
-                  <TableCell align="right">Price</TableCell>
-                  <TableCell align="right">Desc</TableCell>
-                  <TableCell align="center">Image</TableCell>
-                  <TableCell align="right">Category</TableCell>
-                  <TableCell align="center">Actions</TableCell>
+                  <TableCell>Tiêu đề</TableCell>
+                  <TableCell align="right">Giá</TableCell>
+                  <TableCell align="right">Mô tả</TableCell>
+                  <TableCell align="center">Ảnh</TableCell>
+                  <TableCell align="right">Danh mục</TableCell>
+                  <TableCell align="center"></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -118,17 +119,17 @@ function AdminProductList() {
                         justifyContent={"center"}
                       >
                         <Link to={`/admin/product/edit/${product._id}`}>
-                          <Button variant="contained" sx={{ bgcolor: "#f9a825" }}>
-                            Edit
+                          <Button variant="contained" color="warning" >
+                            <EditIcon /> Sửa
                           </Button>
                         </Link>
 
                         <Button
+                          color="error"
                           variant="contained"
-                          sx={{ bgcolor: "red" }}
                           onClick={() => handleConfirm(product._id)}
                         >
-                          Delete
+                          <DeleteForeverIcon /> Xóa
                         </Button>
                       </Stack>
                     </TableCell>
@@ -138,8 +139,8 @@ function AdminProductList() {
             </Table>
             <ConfirmDialog
               confirm={confirm}
-              onConfirm={handleDelete}
-              onCancel={handleCancel}
+              onConfirm={setConfirm}
+              onDelete={handleDelete}
             />
           </TableContainer>
           {/* Phân trang */}
