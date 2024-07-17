@@ -50,22 +50,28 @@ export default function ConfirmDialog({
 }
 
 const ButtonOk = styled(Button)({
-  background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
+  background: "#36363C",
   border: 0,
-  borderRadius: 10,
-  boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
+  borderRadius: 5,
   color: "white",
-  height: 48,
-  padding: "0 20px",
+  height: 40,
+  padding: "0 10px",
+  transition: 'ease 0.8s',
+  ":hover": {
+    background: "#525256",
+  }
 });
 
-const ButtonCancel = styled(Button)(
-  () => `
-  background-color: #000;
-  color: #fff;
-  &:hover {
-    background-color: #000;
-    opacity: 0.6;
+const ButtonCancel = styled(Button)({
+  background: "#36363C",
+  border: 0,
+  borderRadius: 5,
+  color: "white",
+  height: 40,
+  padding: "0 10px",
+  transition: 'ease 0.8s',
+  ":hover": {
+    background: "#525256",
   }
-  `
-);
+});
+

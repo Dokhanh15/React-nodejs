@@ -3,6 +3,7 @@ import {
   Button,
   Container,
   Stack,
+  styled,
   TextField,
   Typography,
 } from "@mui/material";
@@ -30,17 +31,34 @@ const Addcate: React.FC = () => {
   const validate = (values: Category) => {
     const { name, description } = values;
     const errors: ValidationErrors = {};
-    if (!name) errors.name = "Please enter category name";
-    if (!description) errors.description = "Please enter category description";
+    if (!name) errors.name = "Vui lòng nhập tên danh mục";
+    if (!description) errors.description = "Vui lòng nhập mô tả";
 
     return errors;
   };
+
+  const GradientButton = styled(Button)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #FE6B8B 50%, white 90%)',
+    backgroundSize: '200% 200%',
+    border: 0,
+    borderRadius: 3,
+    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    color: 'white',
+    height: 48,
+    width: 250,
+    padding: '0 30px',
+    transition: 'background-position 1s ease',
+    backgroundPosition: '0% 100%',
+    '&:hover': {
+      backgroundPosition: '200% 100%',
+    },
+  }));
 
   return (
     <Container>
       <Stack gap={2}>
         <Typography variant="h3" textAlign={"center"}>
-          Add Category
+          Thêm danh mục
         </Typography>
         <Form
           onSubmit={onSubmit}
@@ -51,8 +69,8 @@ const Addcate: React.FC = () => {
                 name="name"
                 render={({ input, meta }) => (
                   <TextField
-                    label="Category Name"
-                    variant="standard"
+                    label="Tên danh mục"
+                    variant="outlined"
                     {...input}
                     error={meta.touched && Boolean(meta.error)}
                     helperText={meta.touched && meta.error}
@@ -63,17 +81,17 @@ const Addcate: React.FC = () => {
                 name="description"
                 render={({ input, meta }) => (
                   <TextField
-                    label="Description"
-                    variant="standard"
+                    label="Mô tả"
+                    variant="outlined"
                     {...input}
                     error={meta.touched && Boolean(meta.error)}
                     helperText={meta.touched && meta.error}
                   />
                 )}
               />
-              <Button type="submit" variant="contained" color="primary">
-                Submit
-              </Button>
+              <GradientButton type='submit'>
+                Thêm danh mục
+              </GradientButton>
             </Stack>
           )}
         />

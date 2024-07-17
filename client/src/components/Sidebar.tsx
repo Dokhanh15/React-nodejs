@@ -31,13 +31,12 @@ const SidebarItem = styled(ListItem)(({ active }) => ({
     color: 'white',
     borderRadius: '10px',
     width: '230px',
-    margin: '0 auto',
   },
   backgroundColor: active ? '#E63673' : 'transparent',
   color: 'white',
   borderRadius: '10px',
   width: '230px',
-  margin: '0 auto',
+  margin: '10px  auto',
 }));
 
 const Sidebar = () => {
@@ -55,7 +54,7 @@ const Sidebar = () => {
         </Link>
       </LogoContainer>
 
-      <Divider sx={{ width: '100%' }} />
+      <Divider sx={{ width: '100%' }} color='pink' />
 
       <List component="nav">
         <Link to={'/admin'} style={{ textDecoration: 'none' }}>
@@ -67,7 +66,7 @@ const Sidebar = () => {
             <ListItemIcon>
               <DashboardIcon sx={{ color: 'white' }} />
             </ListItemIcon>
-            <ListItemText primary="Dashboard" />
+            <ListItemText primary="Bảng điều khiển" />
           </SidebarItem>
         </Link>
 
@@ -80,7 +79,7 @@ const Sidebar = () => {
             <ListItemIcon>
               <TableChartIcon sx={{ color: 'white' }} />
             </ListItemIcon>
-            <ListItemText primary="Products" />
+            <ListItemText primary="Sản phẩm" />
           </SidebarItem>
         </Link>
 
@@ -93,7 +92,7 @@ const Sidebar = () => {
             <ListItemIcon>
               <ReceiptIcon sx={{ color: 'white' }} />
             </ListItemIcon>
-            <ListItemText primary="Category" />
+            <ListItemText primary="Danh mục" />
           </SidebarItem>
         </Link>
 
@@ -106,7 +105,7 @@ const Sidebar = () => {
             <ListItemIcon>
               <AccountCircleIcon sx={{ color: 'white' }} />
             </ListItemIcon>
-            <ListItemText primary="User" />
+            <ListItemText primary="Người dùng" />
           </SidebarItem>
         </Link>
 
@@ -119,7 +118,7 @@ const Sidebar = () => {
             <ListItemIcon>
               <ExitToAppIcon sx={{ color: 'white' }} />
             </ListItemIcon>
-            <ListItemText primary="Log out" />
+            <ListItemText primary="Đăng xuất" />
           </SidebarItem>
         </Link>
 

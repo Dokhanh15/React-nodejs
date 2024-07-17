@@ -5,7 +5,7 @@ import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "./axiosInstance/axiosInstance";
-import SnackbarAlert from "./snackbar/Snackbar";
+import SnackbarAlert from "../../components/snackbar/Snackbar";
 import Loading from "src/components/loading/loading";
 import { Users } from "src/types/user";
 
@@ -59,7 +59,7 @@ const Login = () => {
       <Loading isShow={loading} />
       <Typography variant="h3" textAlign="center" mb={2} mt={10}>
 
-    
+
         Đăng nhập
       </Typography>
       <Stack>

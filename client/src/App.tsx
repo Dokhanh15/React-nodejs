@@ -12,6 +12,7 @@ import Listcate from "./pages/admin/category/Listcate";
 import AdminProductUpdate from "./pages/admin/product/Edit";
 import { UserProvider } from "./pages/client/userContext/userContext";
 import NotFound from "./components/404!/Notfound";
+import Updatecate from "./pages/admin/category/Updatecate";
 
 const routeConfig = [
   {
@@ -65,15 +66,19 @@ const routeConfig = [
         path: "category/list",
         element: <Listcate />,
       },
+      {
+        path: "category/edit/:id",
+        element: <Updatecate />
+      }
     ],
   },
   {
     path: '/404',
-    element: <NotFound/>
+    element: <NotFound />
   },
   {
     path: '*',
-    element: <NotFound/>
+    element: <NotFound />
   }
 ];
 
