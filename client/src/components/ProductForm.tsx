@@ -1,6 +1,7 @@
 import {
     Button,
     Checkbox,
+    Container,
     FormControl,
     FormControlLabel,
     FormHelperText,
@@ -8,122 +9,155 @@ import {
     MenuItem,
     Select,
     Stack,
-} from "@mui/material";
-import { ValidationErrors } from "final-form";
-import { Field, Form } from "react-final-form";
-import { ProductFormParams } from "src/types/Product";
-import { InputText } from "./elements/InputText";
-
-type ProductFormProps = {
+    TextField,
+    Typography,
+  } from "@mui/material";
+  import { useEffect, useState } from "react";
+  import { ValidationErrors } from "final-form";
+  import { Field, Form } from "react-final-form";
+  import { Category, ProductFormParams } from "src/types/Product";
+  import axios from "axios";
+  
+  type ProductFormProps = {
     onSubmit: (values: ProductFormParams) => void;
-    initialValues?: any;
-};
-
-function ProductForm({ onSubmit, initialValues }: ProductFormProps) {
+    initialValues?: ProductFormParams;
+    isEdit?: boolean;
+  };
+  
+  function ProductForm({ onSubmit, initialValues, isEdit }: ProductFormProps) {
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+  
+    useEffect(() => {
+      const fetchCategories = async () => {
+        try {
+          const { data } = await axios.get("/categories");
+          setCategories(data);
+        } catch (error) {
+          console.error("Error fetching categories", error);
+        }
+      };
+  
+      fetchCategories();
+    }, []);
+  
+    useEffect(() => {
+      if (initialValues && initialValues.category) {
+        setSelectedCategoryId(initialValues.category._id);
+      }
+    }, [initialValues]);
+  
     const validate = (values: ProductFormParams) => {
-        const { title, image, category, price } = values;
-        const errors: ValidationErrors = {};
-        if (!title) errors.title = "Can nhap title vao";
-        if (title && title.length < 6)
-            errors.title = "Can nhap toi thieu 6 ky tu vao";
-        if (!image) errors.image = "Can nhap image vao";
-        if (!category) errors.category = "Can nhap category vao";
-        if (!price) errors.price = "Can nhap price vao";
-        return errors;
+      const { title, image, category, price } = values;
+      const errors: ValidationErrors = {};
+      if (!title) errors.title = "Vui lòng nhập tiêu đề";
+      if (!image) errors.image = "Vui lòng nhập đường dẫn hình ảnh";
+      if (!category) errors.category = "Vui lòng chọn danh mục";
+      if (!price) errors.price = "Vui lòng nhập giá sản phẩm";
+  
+      return errors;
     };
-
+  
     return (
-        <Form
-            onSubmit={onSubmit}
-            validate={validate}
-            initialValues={initialValues}
-            render={({ values }) => {
-                return (
-                    <Stack>
-                        <Field
-                            name="title"
-                            render={({ input, meta }) => (
-                                <InputText
-                                    input={input}
-                                    label={"Title"}
-                                    messageError={meta.touched && meta.error}
-                                />
-                            )}
-                        />
-                        <Field
-                            name="image"
-                            render={({ input, meta }) => (
-                                <InputText
-                                    input={input}
-                                    label={"Image"}
-                                    messageError={meta.touched && meta.error}
-                                />
-                            )}
-                        />
-                        <Field<string>
-                            name="description"
-                            render={({ input, meta }) => (
-                                <InputText
-                                    input={input}
-                                    label={"Description"}
-                                    messageError={meta.touched && meta.error}
-                                />
-                            )}
-                        />
-                        <Field<number>
-                            name="price"
-                            render={({ input, meta }) => (
-                                <InputText
-                                    input={input}
-                                    label={"Price"}
-                                    messageError={meta.touched && meta.error}
-                                    type="number"
-                                />
-                            )}
-                        />
-                        <Field<string>
-                            name="isShow"
-                            type="checkbox"
-                            render={({ input, meta }) => {
-                                return (
-                                    <FormControlLabel
-                                        control={<Checkbox {...input} />}
-                                        label="Show Product"
-                                    />
-                                );
-                            }}
-                        />
-                        <Field<string>
-                            name="category"
-                            render={({ input, meta }) => {
-                                return (
-                                    <FormControl fullWidth>
-                                        <InputLabel>Category</InputLabel>
-                                        <Select label="Category" {...input} error={!!(meta.touched && meta.error)}>
-                                            <MenuItem value="">Select</MenuItem>
-                                            <MenuItem value={"66860195be9e04f02ea662d6"}>
-                                                Thoi trang
-                                            </MenuItem>
-                                            <MenuItem value={"668601a7be9e04f02ea662d9"}>
-                                                Phu Kien
-                                            </MenuItem>
-                                        </Select>
-                                        {meta.touched && meta.error && (
-                                            <FormHelperText sx={{ color: "red" }}>{meta.error}</FormHelperText>
-                                        )}
-                                    </FormControl>
-                                );
-                            }}
-                        />
-
-                        <Button type="submit" onClick={() => onSubmit(values)}>
-                            Submit
-                        </Button>
-                    </Stack>
-                );
-            }}
-        />
+      <Form
+        onSubmit={onSubmit}
+        validate={validate}
+        initialValues={initialValues || { isShow: true }}
+        render={({ handleSubmit, form }) => (
+          <form onSubmit={handleSubmit}>
+            <Stack>
+              <Field
+                name="title"
+                render={({ input, meta }) => (
+                  <TextField
+                    label="Tiêu đề"
+                    variant="standard"
+                    helperText={meta.touched && meta.error}
+                    error={meta.touched && !!meta.error}
+                    {...input}
+                  />
+                )}
+              />
+              <Field
+                name="image"
+                render={({ input, meta }) => (
+                  <TextField
+                    label="Hình ảnh"
+                    variant="standard"
+                    helperText={meta.touched && meta.error}
+                    error={meta.touched && !!meta.error}
+                    {...input}
+                  />
+                )}
+              />
+              <Field<string>
+                name="description"
+                render={({ input }) => (
+                  <TextField label="Mô tả" variant="standard" {...input} />
+                )}
+              />
+              <Field<number>
+                name="price"
+                render={({ input, meta }) => (
+                  <TextField
+                    label="Giá"
+                    variant="standard"
+                    {...input}
+                    type="number"
+                    helperText={meta.touched && meta.error}
+                    error={meta.touched && !!meta.error}
+                  />
+                )}
+              />
+              <Field<string>
+                name="isShow"
+                type="checkbox"
+                render={({ input }) => (
+                  <FormControlLabel
+                    control={<Checkbox {...input} />}
+                    label="Hiển thị sản phẩm"
+                  />
+                )}
+              />
+              <Field<string>
+                name="category"
+                render={({ input, meta }) => (
+                  <FormControl fullWidth>
+                    <InputLabel>Danh mục</InputLabel>
+                    <Select
+                      label="Danh mục"
+                      {...input}
+                      error={meta.touched && Boolean(meta.error)}
+                      value={selectedCategoryId || ""}
+                      onChange={(e) => {
+                        input.onChange(e);
+                        setSelectedCategoryId(e.target.value as string);
+                      }}
+                    >
+                      <MenuItem value="">Chọn</MenuItem>
+                      {categories.map((category) => (
+                        <MenuItem key={category._id} value={category._id}>
+                          {category.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    {meta.touched && meta.error && (
+                      <FormHelperText sx={{ color: "red" }}>
+                        {meta.error}
+                      </FormHelperText>
+                    )}
+                  </FormControl>
+                )}
+              />
+              <Button type="submit">
+                {isEdit ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}
+              </Button>
+            </Stack>
+          </form>
+        )}
+      />
     );
-}
-
-export default ProductForm;
+  }
+  
+  export default ProductForm;
+  
