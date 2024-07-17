@@ -18,7 +18,7 @@ export type Category = {
   description: string;
 };
 
-export type ProductForm = {
+export type ProductFormParams = {
   title: string;
   price: number;
   image: string;

@@ -21,14 +21,14 @@ class AuthController {
       const emailExist = await getUserByEmail(email);
       if (emailExist)
         throw new ApiError(StatusCodes.BAD_REQUEST, "Email đã được đăng ký");
-      
+
       const hashPassword = await bcryptjs.hash(password, 10);
       const user = await User.create({
         email,
         username,
         password: hashPassword,
       });
-      
+
       // Bỏ mật khẩu và confirmPassword khỏi phản hồi
       res.status(StatusCodes.OK).json({
         message: "Tạo tài khoản thành công",

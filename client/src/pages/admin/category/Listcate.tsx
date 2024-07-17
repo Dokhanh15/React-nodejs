@@ -69,7 +69,7 @@ const Listcate: React.FC = () => {
                 <TableCell>ID</TableCell>
                 <TableCell>Name</TableCell>
                 <TableCell>Description</TableCell>
-                <TableCell align="right">Actions</TableCell>
+                <TableCell align="center">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -83,10 +83,12 @@ const Listcate: React.FC = () => {
                   </TableCell>
                   <TableCell>{category.name}</TableCell>
                   <TableCell>{category.description}</TableCell>
-                  <TableCell align="right">
+                  <TableCell align="center">
                     <Stack direction="row" gap={3} justifyContent="center">
-                      <Link  to={`/admin/category/edit/${category._id}`}>
-                        Edit
+                      <Link to={`/admin/category/edit/${category._id}`}>
+                        <Button variant="contained" sx={{ bgcolor: "#f9a825" }}>
+                          Edit
+                        </Button>
                       </Link>
                       <Button
                         variant="contained"

@@ -17,7 +17,7 @@ import { ValidationErrors } from "final-form";
 import { useEffect, useState } from "react";
 import { Field, Form } from "react-final-form";
 import { useNavigate } from "react-router-dom";
-import { ProductForm } from "src/types/Product";
+import { ProductFormParams } from "src/types/Product";
 
 function AdminProductAdd() {
   const nav = useNavigate();
@@ -36,7 +36,7 @@ function AdminProductAdd() {
     fetchCategories();
   }, []);
 
-  const onSubmit = async (values: ProductForm) => {
+  const onSubmit = async (values: ProductFormParams) => {
     try {
       await axios.post("/products", values);
       nav("/admin/product/list");
@@ -45,7 +45,7 @@ function AdminProductAdd() {
     }
   };
 
-  const validate = (values: ProductForm) => {
+  const validate = (values: ProductFormParams) => {
     const { title, image, category, price } = values;
     const errors: ValidationErrors = {};
     if (!title) errors.title = "Can nhap title vao";

@@ -1,12 +1,14 @@
 import { Stack } from "@mui/material";
 import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
+import Footer from "src/components/footer/footer";
+
 import Sidebar from "src/components/Sidebar";
 
 function AdminLayout() {
   const navigate = useNavigate();
   const token = localStorage.getItem("Token");
- useEffect(() => {
+  useEffect(() => {
     if (!token) {
       navigate("/404");
       return;
@@ -14,10 +16,13 @@ function AdminLayout() {
   }, [token, navigate]);
   return (
     <>
-      <Stack direction={"row"} gap={2}>
+      <div style={{ display: "flex" }}>
         <Sidebar />
-        <Outlet />
-      </Stack>
+        <div style={{ flex: 1, padding: "20px" }}>
+          <Outlet />
+        </div>
+      </div>
+      <Footer />
     </>
   );
 }

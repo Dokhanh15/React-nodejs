@@ -1,4 +1,6 @@
+
 import { Button, Container, Stack, TextField, Typography } from "@mui/material";
+
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -6,15 +8,20 @@ import axiosInstance from "./axiosInstance/axiosInstance";
 import SnackbarAlert from "./snackbar/Snackbar";
 import Loading from "src/components/loading/loading";
 import { Users } from "src/types/user";
+
 import { useUser } from "./userContext/userContext";
 
 const Login = () => {
   const { register, handleSubmit, reset, formState: { errors } } = useForm<Users>();
+
+
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
   const { setUser } = useUser();
+
 
   const onSubmit: SubmitHandler<Users> = async (data) => {
     try {
@@ -27,7 +34,9 @@ const Login = () => {
 
       // Lưu token vào localStorage
       localStorage.setItem("Token", response.data.token);
+
       setUser(response.data.user); // Cập nhật trạng thái người dùng
+
       reset();
       setTimeout(() => {
         navigate("/");
@@ -49,6 +58,8 @@ const Login = () => {
     <Container maxWidth="sm" >
       <Loading isShow={loading} />
       <Typography variant="h3" textAlign="center" mb={2} mt={10}>
+
+    
         Đăng nhập
       </Typography>
       <Stack>
@@ -90,5 +101,5 @@ const Login = () => {
     </Container>
   );
 };
-
 export default Login;
+
