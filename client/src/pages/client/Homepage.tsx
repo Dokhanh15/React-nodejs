@@ -1,64 +1,73 @@
-import { Stack, Typography, Snackbar, Alert } from "@mui/material";
+import { Grid, Stack } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Product } from "src/types/Product";
 import Loading from "src/components/loading/loading";
+import { Product } from "src/types/Product";
+import SnackbarAlert from "./snackbar/Snackbar";
+import { Link } from "react-router-dom";
 import ListProduct from "./Listproducts";
 
 function Homepage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
 
-  const getAllProduct = async () => {
+  const getAllProducts = async () => {
     try {
       setLoading(true);
-      setError(""); // Clear any previous error
-      const { data } = await axios.get("http://localhost:3000/products");
+      setError("");
+      setSuccess("");
+      const { data } = await axios.get("/products");
       setProducts(data);
     } catch (error) {
       setError("Có lỗi xảy ra, vui lòng thử lại sau!");
-      console.log(error);
+      console.error(error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    getAllProduct();
+    getAllProducts();
   }, []);
 
   const handleCloseSnackbar = () => {
     setError("");
+    setSuccess("");
   };
 
   return (
     <>
       <Loading isShow={loading} />
-      <Typography sx={{ textAlign: 'center', fontSize: 50, mb: 10 }}>
-        Danh sách sản phẩm
-      </Typography>
-      <Snackbar
-        open={!!error}
-        autoHideDuration={3000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }} 
-      >
-        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%'}}>
-          {error}
-        </Alert>
-      </Snackbar>
-      <Stack
-        direction={"row"}
-        flexWrap={"wrap"}
-        gap={4}
-        alignItems={"center"}
-        justifyContent={"center"}
-      >
-        {products.map((product, index) => (
-          <ListProduct key={index} product={product} />
-        ))}
-      </Stack>
+      <Grid container spacing={4} justifyContent="center" mt={3}>
+        <SnackbarAlert
+          message={error}
+          severity="error"
+          open={!!error}
+          onClose={handleCloseSnackbar}
+        />
+        <SnackbarAlert
+          message={success}
+          severity="success"
+          open={!!success}
+          onClose={handleCloseSnackbar}
+        />
+        <Stack
+          direction="row"
+          flexWrap="wrap"
+          gap={4}
+          alignItems="center"
+          justifyContent="center"
+          sx={{ px: 4, py: 6 }}
+        >
+          {products.map((product, index) => (
+            <Link key={index} to={`/product/${product._id}`} style={{ textDecoration: "none" }}>
+              <ListProduct product={product} />
+            </Link>
+          ))}
+        </Stack>
+      </Grid>
     </>
   );
 }

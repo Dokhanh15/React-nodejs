@@ -87,14 +87,15 @@ function AdminProductList() {
                     <TableCell align="right">{product.price}</TableCell>
                     <TableCell align="right">{product.description}</TableCell>
                     <TableCell align="right">{product.image}</TableCell>
-                    {/* <TableCell align="right">{product.category.name}</TableCell> */}
+                    <TableCell align="right">{product.category?.name}</TableCell>
+
                     <TableCell align="right">
                       <Stack
                         direction={"row"}
                         gap={3}
                         justifyContent={"center"}
                       >
-                        <Link to={""}>Edit</Link>
+                       <Link to={`/admin/product/edit/${product._id}`}>Edit</Link>
                         <Button
                           variant="contained"
                           sx={{ bgcolor: "red" }}

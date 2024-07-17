@@ -15,7 +15,7 @@ class ProductsController {
   // GET /products/:id
   async getProductDetail(req, res, next) {
     try {
-      const product = await Product.findById(req.params.id);
+      const product = await Product.findById(req.params.id).populate("category");
 
       if (!product) throw new ApiError(404, "Product Not Found");
       res.status(StatusCodes.OK).json(product);

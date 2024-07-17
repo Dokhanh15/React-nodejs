@@ -5,6 +5,7 @@ import {
   ButtonGroup,
   Container,
   Stack,
+  TableCell,
   Typography,
 } from "@mui/material";
 import axios from "axios";
@@ -51,7 +52,7 @@ function Detail() {
   return (
     <>
       <Loading isShow={loading} />
-      <Stack sx={{ marginLeft: "120px" }}>
+      <Stack sx={{ marginLeft: "120px" }} mt={10}>
         <Container>
           {product && (
             <Stack
@@ -69,7 +70,7 @@ function Detail() {
                   Giá: {product.price}$
                 </Typography>
                 <Typography>Danh mục: {product.category?.name ?? "N/A"}</Typography>
-                <Typography>Đánh giá: {product.rating?.rate ?? "N/A"}/5</Typography>
+                <Typography>Đánh giá: 4.8/5</Typography>
                 <Stack sx={{ gap: "50px" }} direction="row" alignItems="center">
                   <Typography>Số lượng:</Typography>
                   <ButtonGroup

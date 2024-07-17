@@ -9,30 +9,11 @@ import {
   Toolbar,
   Typography
 } from "@mui/material";
-import { useEffect, useState } from 'react';
-import axiosInstance from 'src/pages/client/axiosInstance/axiosInstance';
-import { Users } from 'src/types/user';
 import logo from '../../assets/img/logo.png'
+import { useUser } from "src/pages/client/userContext/userContext";
 
 const Header = () => {
-  const [user, setUser] = useState<Users | null>(null);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const token = localStorage.getItem('Token');
-        if (token) {
-          const response = await axiosInstance.get('/auth', {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          setUser(response.data);
-        }
-      } catch (error) {
-        console.error('Failed to fetch user:', error);
-      }
-    };
-    fetchUser();
-  }, []);
+  const { user, setUser } = useUser();
 
   const handleLogout = () => {
     localStorage.removeItem('Token');
@@ -53,8 +34,7 @@ const Header = () => {
       >
         <Stack direction="row" spacing={15} sx={{ flexGrow: 1 }}>
           <Link href="/" sx={{ textDecoration: "none" }}>
-            {/* <Typography variant="h6" sx={{ fontFamily:'sans-serif', fontWeight: 'revert', color: 'primary.main', display: 'flex', alignItems: 'center', textDecoration: 'none' }}>CODER</Typography> */}
-          <img src={logo} width={115} alt="" />
+            <img src={logo} width={115} alt="" />
           </Link>
           <Stack direction="row" spacing={2} alignItems="center">
             <Link href="/" color="black" underline="none" sx={{ "&:hover": { borderBottom: "1px solid" } }}>Home</Link>
