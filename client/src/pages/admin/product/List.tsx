@@ -95,7 +95,7 @@ function AdminProductList() {
                         justifyContent={"center"}
                       >
                         <Link to={`/admin/product/edit/${product._id}`}>
-                          <Button variant="contained" sx={{ bgcolor: "blue" }}>
+                          <Button variant="contained" sx={{ bgcolor: "#f9a825" }}>
                             Edit
                           </Button>
                         </Link>

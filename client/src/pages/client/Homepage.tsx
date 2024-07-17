@@ -44,7 +44,7 @@ function Homepage() {
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }} 
       >
-        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%', mt:10 }}>
+        <Alert onClose={handleCloseSnackbar} severity="error" sx={{ width: '100%'}}>
           {error}
         </Alert>
       </Snackbar>

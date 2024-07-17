@@ -99,7 +99,7 @@ function ProductForm({ onSubmit, initialValues }: ProductFormProps) {
                                 return (
                                     <FormControl fullWidth>
                                         <InputLabel>Category</InputLabel>
-                                        <Select label="Category" {...input} error>
+                                        <Select label="Category" {...input} error={!!(meta.touched && meta.error)}>
                                             <MenuItem value="">Select</MenuItem>
                                             <MenuItem value={"66860195be9e04f02ea662d6"}>
                                                 Thoi trang
@@ -109,7 +109,7 @@ function ProductForm({ onSubmit, initialValues }: ProductFormProps) {
                                             </MenuItem>
                                         </Select>
                                         {meta.touched && meta.error && (
-                                            <FormHelperText>{meta.error}</FormHelperText>
+                                            <FormHelperText sx={{ color: "red" }}>{meta.error}</FormHelperText>
                                         )}
                                     </FormControl>
                                 );

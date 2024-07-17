@@ -1,15 +1,16 @@
-import { CssBaseline, Stack } from "@mui/material";
+// import { Stack } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import Sidebar from "src/components/Sidebar";
 
 function AdminLayout() {
   return (
     <>
-      <Stack direction={"row"} gap={2}>
-        <CssBaseline />
+      <div style={{ display: 'flex' }}>
         <Sidebar />
-        <Outlet />
-      </Stack>
+        <div style={{ flex: 1, padding: '20px' }}>
+          <Outlet />
+        </div>
+      </div>
     </>
   );
 }

@@ -59,7 +59,7 @@ import { Users } from "src/types/user";
       <Container maxWidth="sm">
         <Loading isShow={loading} />
         <Typography variant="h3" textAlign="center" mb={2}>
-          Đăng ký
+          Đăng Ký
         </Typography>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={2}>

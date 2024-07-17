@@ -1,10 +1,9 @@
 import Joi from "joi";
 
 const registerValidator = Joi.object({
-  username: Joi.string().min(3).max(10).required().messages({
+  username: Joi.string().min(3).messages({
     "any.required": "Tên đăng nhập là bắt buộc",
     "string.min": "Tên đăng nhập phải có ít nhất 3 ký tự",
-    "string.max": "Tên đăng nhập không được quá 10 ký tự",
   }),
   email: Joi.string().email().required().messages({
     "string.email": "Email không đúng định dạng",
