@@ -34,6 +34,7 @@ const routeConfig = [
       },
     ],
   },
+
   {
     path: "/admin",
     element: <AdminLayout />,
