@@ -116,8 +116,8 @@ const Login = () => {
                 {...register("password", {
                   required: "Vui lòng nhập mật khẩu",
                   minLength: {
-                    value: 6,
-                    message: "Mật khẩu ít nhất 6 ký tự",
+                    value: 5,
+                    message: "Mật khẩu ít nhất 5 ký tự",
                   },
                 })}
                 error={!!errors?.password?.message}

@@ -1,32 +1,25 @@
-import React, { createContext, useState, useContext, ReactNode } from "react";
+import React, { createContext, useContext, useState } from 'react';
 
-interface LoadingContextType {
-    loading: boolean;
-    setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+interface LoadingContextProps {
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const LoadingContext = createContext<LoadingContextType | undefined>(undefined);
+const LoadingContext = createContext<LoadingContextProps | undefined>(undefined);
 
-export const useLoading = (): LoadingContextType => {
-    const context = useContext(LoadingContext);
-    if (!context) {
-        throw new Error("useLoading must be used within a LoadingProvider");
-    }
-    return context;
+export const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  return (
+    <LoadingContext.Provider value={{ isLoading, setIsLoading }}>
+      {children}
+    </LoadingContext.Provider>
+  );
 };
 
-interface LoadingProviderProps {
-    children: ReactNode;
-}
-
-export const LoadingProvider: React.FC<LoadingProviderProps> = ({
-    children,
-}) => {
-    const [loading, setLoading] = useState<boolean>(false);
-
-    return (
-        <LoadingContext.Provider value={{ loading, setLoading }}>
-            {children}
-        </LoadingContext.Provider>
-    );
+export const useLoading = () => {
+  const context = useContext(LoadingContext);
+  if (context === undefined) {
+    throw new Error('useLoading must be used within a LoadingProvider');
+  }
+  return context;
 };
