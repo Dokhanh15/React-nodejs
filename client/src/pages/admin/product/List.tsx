@@ -15,33 +15,34 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ConfirmDialog from "src/components/ConfirmDialog";
-import Loading from "src/components/loading/loading";
 import SnackbarAlert from "src/components/snackbar/Snackbar";
 import { Product } from "src/types/Product";
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { useLoading } from "src/contexts/loading";
+import Loading from "src/components/loading/loading";
 
 function AdminProductList() {
+  const { loading, setLoading } = useLoading();
   const [showSuccess, setShowSuccess] = useState(false);
   const [confirm, setConfirm] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [idDelete, setIdDelete] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [productsPerPage] = useState<number>(8);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null); // Trạng thái lỗi
 
   const getAllProduct = async () => {
     try {
-      setIsLoading(true);
+      setLoading(true);
       setError(null);
       const { data } = await axios.get("/products");
       setProducts(data);
     } catch (error) {
       setError("Có lỗi xảy ra, vui lòng thử lại sau!"); // Thiết lập thông báo lỗi
     }
-    setIsLoading(false);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -74,6 +75,7 @@ function AdminProductList() {
   return (
     <>
       <Container>
+
         <Stack gap={2}>
           <Typography variant="h3" textAlign={"center"}>
             Danh sách sản phẩm
@@ -83,8 +85,8 @@ function AdminProductList() {
               <AddIcon /> Thêm sản phẩm
             </Button>
           </Link>
-          {isLoading ? (
-            <Loading isShow={isLoading} />
+          {loading ? (
+            <Loading isShow={loading} />
           ) : (
             <TableContainer component={Paper}>
               <Table
