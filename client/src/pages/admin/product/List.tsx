@@ -26,7 +26,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { useLoading } from "src/contexts/loading";
 import Loading from "src/components/loading/loading";
-import { useFlash } from "src/contexts/flash";
 
 function AdminProductList() {
   const { loading, setLoading } = useLoading();
@@ -35,7 +34,6 @@ function AdminProductList() {
   const [products, setProducts] = useState<Product[]>([]);
   const [idDelete, setIdDelete] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const { setFlash, clearFlash } = useFlash();
   const [productsPerPage] = useState<number>(6);
   const [error, setError] = useState<string | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -44,13 +42,10 @@ function AdminProductList() {
   const getAllProduct = async () => {
     try {
       setLoading(true);
-      clearFlash();
-      // setError(null);
       const { data } = await axios.get("/products");
       setProducts(data);
     } catch (error) {
-      // setError("Có lỗi xảy ra, vui lòng thử lại sau!");
-      setFlash("Có lỗi xảy ra, vui lòng thử lại sau!", "error");
+      // setFlash("Có lỗi xảy ra, vui lòng thử lại sau!", "error");
     }
     setLoading(false);
   };
@@ -71,14 +66,12 @@ function AdminProductList() {
   const handleDelete = async () => {
     try {
       await axios.delete("/products/" + idDelete);
-      setFlash("Xóa sản phẩm thành công!", "success");
       setShowSuccess(true);
       getAllProduct();
       setConfirm(false);
       setIdDelete(null);
     } catch (error) {
       setError("Có lỗi xảy ra khi xóa sản phẩm, vui lòng thử lại sau!");
-      setFlash("Có lỗi xảy ra khi xóa sản phẩm, vui lòng thử lại sau!", "error");
     }
   };
 

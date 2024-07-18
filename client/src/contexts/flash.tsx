@@ -10,8 +10,15 @@ interface FlashContextProps {
 
 const FlashContext = createContext<FlashContextProps | undefined>(undefined);
 
-export const FlashProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const useFlash = () => {
+  const context = useContext(FlashContext);
+  if (context === undefined) {
+    throw new Error('useFlash must be used within a FlashProvider');
+  }
+  return context;
+};
 
+export const FlashProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [message, setMessage] = useState<string | null>(null);
   const [severity, setSeverity] = useState<'error' | 'success' | 'info' | 'warning' | null>(null);
   const [showFlash, setShowFlash] = useState<boolean>(false);
@@ -35,10 +42,3 @@ export const FlashProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   );
 };
 
-export const useFlash = () => {
-  const context = useContext(FlashContext);
-  if (context === undefined) {
-    throw new Error('useFlash must be used within a FlashProvider');
-  }
-  return context;
-}
