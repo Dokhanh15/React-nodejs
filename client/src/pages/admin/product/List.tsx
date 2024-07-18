@@ -19,35 +19,40 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ConfirmDialog from "src/components/ConfirmDialog";
-import Loading from "src/components/loading/loading";
 import SnackbarAlert from "src/components/snackbar/Snackbar";
 import { Product } from "src/types/Product";
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { useLoading } from "src/contexts/loading";
+import Loading from "src/components/loading/loading";
+import { useFlash } from "src/contexts/flash";
 
 function AdminProductList() {
+  const { loading, setLoading } = useLoading();
   const [showSuccess, setShowSuccess] = useState(false);
   const [confirm, setConfirm] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [idDelete, setIdDelete] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [productsPerPage] = useState<number>(8);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { setFlash, clearFlash } = useFlash();
+  const [productsPerPage] = useState<number>(6);
   const [error, setError] = useState<string | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const totalPages = Math.ceil(products.length / productsPerPage);
 
   const getAllProduct = async () => {
     try {
-      setIsLoading(true);
-      setError(null);
+      setLoading(true);
+      clearFlash();
+      // setError(null);
       const { data } = await axios.get("/products");
       setProducts(data);
     } catch (error) {
-      setError("Có lỗi xảy ra, vui lòng thử lại sau!");
+      // setError("Có lỗi xảy ra, vui lòng thử lại sau!");
+      setFlash("Có lỗi xảy ra, vui lòng thử lại sau!", "error");
     }
-    setIsLoading(false);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -66,12 +71,14 @@ function AdminProductList() {
   const handleDelete = async () => {
     try {
       await axios.delete("/products/" + idDelete);
+      setFlash("Xóa sản phẩm thành công!", "success");
       setShowSuccess(true);
       getAllProduct();
       setConfirm(false);
       setIdDelete(null);
     } catch (error) {
       setError("Có lỗi xảy ra khi xóa sản phẩm, vui lòng thử lại sau!");
+      setFlash("Có lỗi xảy ra khi xóa sản phẩm, vui lòng thử lại sau!", "error");
     }
   };
 
@@ -88,6 +95,7 @@ function AdminProductList() {
   return (
     <>
       <Container>
+
         <Stack gap={2}>
           <Typography variant="h3" textAlign={"center"}>
             Danh sách sản phẩm
@@ -97,8 +105,8 @@ function AdminProductList() {
               <AddIcon /> Thêm sản phẩm
             </Button>
           </Link>
-          {isLoading ? (
-            <Loading isShow={isLoading} />
+          {loading ? (
+            <Loading isShow={loading} />
           ) : (
             <TableContainer component={Paper}>
               <Table sx={{ minWidth: 1000, textAlign: "center" }} aria-label="simple table">

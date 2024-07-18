@@ -13,7 +13,6 @@ import AdminProductUpdate from "./pages/admin/product/Edit";
 import { UserProvider } from "./pages/client/userContext/userContext";
 import NotFound from "./components/404!/Notfound";
 import Updatecate from "./pages/admin/category/Updatecate";
-import { FlashProvider } from "./contexts/flash";
 
 const routeConfig = [
   {

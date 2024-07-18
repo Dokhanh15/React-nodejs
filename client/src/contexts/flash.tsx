@@ -1,25 +1,35 @@
-// src/context/FlashContext.tsx
 import React, { createContext, useContext, useState } from 'react';
 
-export type FlashType = 'success' | 'error' | 'warning' | 'info';
-
-export interface FlashMessage {
-  message: string;
-  type: FlashType;
-}
-
 interface FlashContextProps {
-  flashMessage: FlashMessage | null;
-  setFlashMessage: React.Dispatch<React.SetStateAction<FlashMessage | null>>;
+  message: string | null;
+  severity: 'error' | 'success' | 'info' | 'warning' | null;
+  showFlash: boolean;
+  setFlash: (message: string, severity: 'error' | 'success' | 'info' | 'warning') => void;
+  clearFlash: () => void;
 }
 
 const FlashContext = createContext<FlashContextProps | undefined>(undefined);
 
 export const FlashProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [flashMessage, setFlashMessage] = useState<FlashMessage | null>(null);
+
+  const [message, setMessage] = useState<string | null>(null);
+  const [severity, setSeverity] = useState<'error' | 'success' | 'info' | 'warning' | null>(null);
+  const [showFlash, setShowFlash] = useState<boolean>(false);
+
+  const setFlash = (msg: string, sev: 'error' | 'success' | 'info' | 'warning') => {
+    setMessage(msg);
+    setSeverity(sev);
+    setShowFlash(true);
+  };
+
+  const clearFlash = () => {
+    setMessage(null);
+    setSeverity(null);
+    setShowFlash(false);
+  };
 
   return (
-    <FlashContext.Provider value={{ flashMessage, setFlashMessage }}>
+    <FlashContext.Provider value={{ message, severity, showFlash, setFlash, clearFlash }}>
       {children}
     </FlashContext.Provider>
   );
@@ -27,8 +37,8 @@ export const FlashProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
 export const useFlash = () => {
   const context = useContext(FlashContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useFlash must be used within a FlashProvider');
   }
   return context;
-};
+}
