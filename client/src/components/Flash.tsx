@@ -10,9 +10,9 @@ function Flash({ isShow }: FlashProps) {
       anchorOrigin={{ vertical: "top", horizontal: "right" }}
       open={isShow}
       onClose={() => {}}
-      autoHideDuration={1000}
+      autoHideDuration={2000}
     >
-      <Alert severity="success">This is a success Alert.</Alert>
+      <Alert severity="success">Thành công!</Alert>
     </Snackbar>
   );
 }

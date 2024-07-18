@@ -23,7 +23,7 @@ function Detail() {
   const getProductDetail = async (id: string) => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`http://localhost:3000/products/${id}`);
+      const { data } = await axios.get(`/products/${id}`);
       setProduct(data);
     } catch (error) {
       console.log(error);
@@ -64,7 +64,7 @@ function Detail() {
                 <Typography variant="h3" component={"h1"} fontSize={"24px"}>
                   {product.title}
                 </Typography>
-                <Typography fontSize={"18px"}>Mô tả: {product.description}</Typography>
+                <Typography fontSize={"18px"}>Mô tả: {product.description ?? "N/A"}</Typography>
                 <Typography color={"red"} fontWeight={"bold"}>
                   Giá: {product.price}$
                 </Typography>
@@ -81,16 +81,16 @@ function Detail() {
                       cursor: "pointer",
                     }}
                   >
-                    <Typography onClick={handleDecreaseQuantity}>
+                    <Typography sx={{ marginTop: '5px' }} onClick={handleDecreaseQuantity}>
                       <RemoveIcon />
                     </Typography>
                     <Typography>{quantity}</Typography>
-                    <Typography onClick={handleIncreaseQuantity}>
+                    <Typography sx={{ marginTop: '5px' }} onClick={handleIncreaseQuantity}>
                       <AddIcon />
                     </Typography>
                   </ButtonGroup>
                 </Stack>
-                <Button sx={{width:'200px'}} variant="outlined" color="primary">
+                <Button sx={{ width: '200px' }} variant="outlined" color="primary">
                   Thêm vào giỏ hàng
                 </Button>
               </Stack>

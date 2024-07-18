@@ -10,7 +10,7 @@ const SnackbarAlert: React.FC<SnackbarAlertProps> = ({ message, severity, open, 
       onClose={onClose}
       anchorOrigin={{ vertical: "top", horizontal: "right" }}
     >
-      <Alert onClose={onClose} severity={severity} sx={{ width: "100%", mt: 19 }}>
+      <Alert onClose={onClose} severity={severity} sx={{ width: "100%" }}>
         {message}
       </Alert>
     </Snackbar>

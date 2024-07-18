@@ -15,13 +15,15 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ConfirmDialog from "src/components/ConfirmDialog";
-import Flash from "src/components/Flash";// Import thành phần SnackbarAlert
 import Loading from "src/components/loading/loading";
 import SnackbarAlert from "src/components/snackbar/Snackbar";
 import { Product } from "src/types/Product";
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 function AdminProductList() {
-  const [showFlash, setShowFlash] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [confirm, setConfirm] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [idDelete, setIdDelete] = useState<string | null>(null);
@@ -33,10 +35,9 @@ function AdminProductList() {
   const getAllProduct = async () => {
     try {
       setIsLoading(true);
-      setError("");
+      setError(null);
       const { data } = await axios.get("/products");
       setProducts(data);
-      setError(null); // Reset lỗi nếu tải thành công
     } catch (error) {
       setError("Có lỗi xảy ra, vui lòng thử lại sau!"); // Thiết lập thông báo lỗi
     }
@@ -59,31 +60,28 @@ function AdminProductList() {
   const handleDelete = async () => {
     try {
       await axios.delete("/products/" + idDelete);
-      setShowFlash(true);
+      setShowSuccess(true);
       getAllProduct();
       setConfirm(false);
       setIdDelete(null);
     } catch (error) {
-      console.log(error);
+      setError("Có lỗi xảy ra khi xóa sản phẩm, vui lòng thử lại sau!");
     }
   };
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
-  const handleCancel = () => {
-    setConfirm(false);
-  };
-
   return (
     <>
       <Container>
-        <Flash isShow={showFlash} />
         <Stack gap={2}>
-          <Typography variant="h2" textAlign={"center"}>
-            Product List
+          <Typography variant="h3" textAlign={"center"}>
+            Danh sách sản phẩm
           </Typography>
           <Link to="/admin/product/add">
-            <Button variant="contained">Add Product</Button>
+            <Button variant="contained" color="primary">
+              <AddIcon /> Thêm sản phẩm
+            </Button>
           </Link>
           {isLoading ? (
             <Loading isShow={isLoading} />
@@ -95,12 +93,12 @@ function AdminProductList() {
               >
                 <TableHead>
                   <TableRow>
-                    <TableCell>Title</TableCell>
-                    <TableCell align="right">Price</TableCell>
-                    <TableCell align="right">Desc</TableCell>
-                    <TableCell align="center">Image</TableCell>
-                    <TableCell align="right">Category</TableCell>
-                    <TableCell align="center">Actions</TableCell>
+                    <TableCell>Tiêu đề</TableCell>
+                    <TableCell align="right">Giá</TableCell>
+                    <TableCell align="right">Mô tả</TableCell>
+                    <TableCell align="center">Ảnh</TableCell>
+                    <TableCell align="right">Danh mục</TableCell>
+                    <TableCell align="center"></TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -124,17 +122,17 @@ function AdminProductList() {
                           justifyContent={"center"}
                         >
                           <Link to={`/admin/product/edit/${product._id}`}>
-                            <Button variant="contained" sx={{ bgcolor: "#f9a825" }}>
-                              Edit
+                            <Button variant="contained" color="warning" >
+                              <EditIcon /> Sửa
                             </Button>
                           </Link>
 
                           <Button
+                            color="error"
                             variant="contained"
-                            sx={{ bgcolor: "red" }}
                             onClick={() => handleConfirm(product._id)}
                           >
-                            Delete
+                            <DeleteForeverIcon /> Xóa
                           </Button>
                         </Stack>
                       </TableCell>
@@ -144,11 +142,13 @@ function AdminProductList() {
               </Table>
               <ConfirmDialog
                 confirm={confirm}
-                onConfirm={handleDelete}
-                onCancel={handleCancel}
+                onConfirm={setConfirm}
+                onDelete={handleDelete}
               />
             </TableContainer>
           )}
+
+          {/* Phân trang */}
           <Stack gap={1} direction="row" justifyContent="center" mt={2}>
             {Array.from({ length: Math.ceil(products.length / productsPerPage) }).map((_, index) => (
               <Button
@@ -167,13 +167,22 @@ function AdminProductList() {
             ))}
           </Stack>
         </Stack>
+
         {error && (
           <SnackbarAlert
             message={error}
             severity="error"
             open={Boolean(error)}
             onClose={() => setError(null)}
-            
+          />
+        )}
+
+        {showSuccess && (
+          <SnackbarAlert
+            message="Xóa sản phẩm thành công!"
+            severity="success"
+            open={showSuccess}
+            onClose={() => setShowSuccess(false)}
           />
         )}
       </Container>
