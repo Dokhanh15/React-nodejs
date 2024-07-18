@@ -109,7 +109,7 @@ const Sidebar = () => {
           </SidebarItem>
         </Link>
 
-        <Link to={'#'} style={{ textDecoration: 'none' }}>
+        <Link to={'/'} style={{ textDecoration: 'none' }}>
           <SidebarItem
             button
             active={selectedIndex === 7}
@@ -118,7 +118,7 @@ const Sidebar = () => {
             <ListItemIcon>
               <ExitToAppIcon sx={{ color: 'white' }} />
             </ListItemIcon>
-            <ListItemText primary="Đăng xuất" />
+            <ListItemText primary="Website" />
           </SidebarItem>
         </Link>
 
