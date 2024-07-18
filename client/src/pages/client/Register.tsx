@@ -9,7 +9,7 @@ import {
   import { useState } from "react";
   import { SubmitHandler, useForm } from "react-hook-form";
   import { useNavigate } from "react-router-dom";
-  import SnackbarAlert from "./snackbar/Snackbar";
+  import SnackbarAlert from "../../components/snackbar/Snackbar";
   import Loading from "src/components/loading/loading";
 import { Users } from "src/types/user";
   

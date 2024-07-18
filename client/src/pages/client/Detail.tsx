@@ -64,7 +64,7 @@ function Detail() {
                 <Typography variant="h3" component={"h1"} fontSize={"24px"}>
                   {product.title}
                 </Typography>
-                <Typography fontSize={"18px"}>{product.description}</Typography>
+                <Typography fontSize={"18px"}>Mô tả: {product.description}</Typography>
                 <Typography color={"red"} fontWeight={"bold"}>
                   Giá: {product.price}$
                 </Typography>

@@ -115,7 +115,7 @@ import {
                 render={({ input }) => (
                   <FormControlLabel
                     control={<Checkbox {...input} />}
-                    label="Hiển thị sản phẩm"
+                    label="Check box"
                   />
                 )}
               />
