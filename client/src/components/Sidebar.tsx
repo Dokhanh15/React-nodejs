@@ -12,7 +12,7 @@ const SidebarContainer = styled('div')(({ theme }) => ({
   width: '250px',
   backgroundColor: '#36363C',
   color: '#fff',
-  height: '150vh',
+  height: '155vh',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',

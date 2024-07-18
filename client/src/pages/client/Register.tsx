@@ -1,17 +1,20 @@
 import {
-    Button,
-    Container,
-    Stack,
-    TextField,
-    Typography
-  } from "@mui/material";
-  import axios from "axios";
-  import { useState } from "react";
-  import { SubmitHandler, useForm } from "react-hook-form";
-  import { useNavigate } from "react-router-dom";
-  import SnackbarAlert from "../../components/snackbar/Snackbar";
-  import Loading from "src/components/loading/loading";
-
+  Avatar,
+  Box,
+  Button,
+  Container,
+  Grid,
+  Link,
+  styled,
+  TextField,
+  Typography
+} from "@mui/material";
+import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import SnackbarAlert from "../../components/snackbar/Snackbar";
+import Loading from "src/components/loading/loading";
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { Users } from "src/types/user";
 import axiosInstance from "./axiosInstance/axiosInstance";
 
@@ -57,52 +60,126 @@ const Register = () => {
     setSuccess("");
   };
 
+  const GradientButton = styled(Button)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #FE6B8B 50%, white 90%)',
+    backgroundSize: '200% 200%',
+    border: 0,
+    borderRadius: 3,
+    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    color: 'white',
+    height: 48,
+    width: 600,
+    marginTop: '20px',
+    padding: '0 30px',
+    transition: 'background-position 1s ease',
+    backgroundPosition: '0% 100%',
+    '&:hover': {
+      backgroundPosition: '200% 100%',
+    },
+  }));
+
   return (
     <Container maxWidth="sm">
       <Loading isShow={loading} />
-      <Typography variant="h3" textAlign="center" mb={2} mt={10}>
-        Đăng Ký
-      </Typography>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack spacing={2}>
-          <TextField
-            label="Tên đăng nhập"
-            {...register("username", {
-              required: "Tên đăng nhập là bắt buộc",
-            })}
-            error={!!errors.username}
-            helperText={errors?.username?.message}
-          />
-          <TextField
-            label="Email"
-            type="email"
-            {...register("email", { required: "Email là bắt buộc" })}
-            error={!!errors.email}
-            helperText={errors?.email?.message}
-          />
-          <TextField
-            label="Mật khẩu"
-            type="password"
-            {...register("password", { required: "Mật khẩu là bắt buộc" })}
-            error={!!errors.password}
-            helperText={errors?.password?.message}
-          />
-          <TextField
-            label="Xác nhận mật khẩu"
-            type="password"
-            {...register("confirmPassword", {
-              required: "Xác nhận mật khẩu là bắt buộc",
-              validate: value =>
-                value === password || "Mật khẩu không khớp"
-            })}
-            error={!!errors.confirmPassword}
-            helperText={errors?.confirmPassword?.message}
-          />
-          <Button type="submit" variant="contained" disabled={loading}>
+      <Box
+        sx={{
+          marginTop: 4,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <LockOutlinedIcon />
+        </Avatar>
+
+        <Typography component="h1" variant="h3">
+          Đăng ký
+        </Typography>
+
+        <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3 }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} >
+              <TextField
+                autoComplete="given-name"
+                fullWidth
+                label="Tên người dùng"
+                autoFocus
+                {...register("username", {
+                  required: "Vui lòng nhập tên người dùng",
+                })}
+                error={!!errors?.username?.message}
+                helperText={errors?.username?.message}
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Email Address"
+                autoComplete="email"
+                {...register("email", {
+                  required: "Vui lòng nhập email",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Vui lòng nhập đúng định dạng email",
+                  },
+                })}
+                error={!!errors?.email?.message}
+                helperText={errors?.email?.message}
+
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Mật khẩu"
+                type="password"
+                autoComplete="new-password"
+                {...register("password", {
+                  required: "Vui lòng nhập mật khẩu",
+                  minLength: {
+                    value: 6,
+                    message: "Mật khẩu có ít nhất 6 ký tự",
+                  },
+                })}
+                error={!!errors?.password?.message}
+                helperText={errors?.password?.message}
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Nhập lại mật khẩu"
+                type="password"
+                autoComplete="confirm-password"
+                {...register("confirmPassword", {
+                  required: "Vui lòng xác nhận lại mật khẩu",
+                  validate: (value) =>
+                    value === password || "Mật khẩu không khớp",
+                })}
+                error={!!errors?.confirmPassword?.message}
+                helperText={errors?.confirmPassword?.message}
+
+              />
+            </Grid>
+
+          </Grid>
+          <GradientButton type="submit">
             Đăng ký
-          </Button>
-        </Stack>
-      </form>
+          </GradientButton>
+          <Grid container justifyContent="flex-end">
+            <Grid item>
+              <Link href="/login" variant="body2" sx={{ lineHeight: '4' }}>
+                Đã có tài khoản? Đăng nhập
+              </Link>
+            </Grid>
+          </Grid>
+        </Box>
+      </Box>
+
       <SnackbarAlert
         message={error}
         severity="error"

@@ -50,7 +50,7 @@ export default function ConfirmDialog({
 }
 
 const ButtonOk = styled(Button)({
-  background: "#36363C",
+  background: "#C62828",
   border: 0,
   borderRadius: 5,
   color: "white",
@@ -58,7 +58,7 @@ const ButtonOk = styled(Button)({
   padding: "0 10px",
   transition: 'ease 0.8s',
   ":hover": {
-    background: "#525256",
+    background: "#A53030",
   }
 });
 

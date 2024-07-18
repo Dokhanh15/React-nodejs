@@ -5,6 +5,7 @@ import {
   ButtonGroup,
   Container,
   Stack,
+  styled,
   Typography
 } from "@mui/material";
 import axios from "axios";
@@ -19,6 +20,25 @@ function Detail() {
   const [product, setProduct] = useState<Product>();
   const [loading, setLoading] = useState<boolean>(false);
   const [quantity, setQuantity] = useState<number>(1);
+
+  const GradientButton = styled(Button)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #FE6B8B 50%, white 90%)',
+    backgroundSize: '200% 200%',
+    border: 0,
+    borderRadius: 5,
+    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    color: 'white',
+    height: 48,
+    width: 250,
+    marginTop: '20px',
+    padding: '0 30px',
+    // transition: 'background-position 1s ease',
+    // backgroundPosition: '0% 100%',
+    '&:hover': {
+      // backgroundPosition: '200% 100%',
+      background: 'linear-gradient(45deg, #D25973 50% , #D25973 90%)',
+    },
+  }));
 
   const getProductDetail = async (id: string) => {
     try {
@@ -61,7 +81,7 @@ function Detail() {
             >
               <img src={product.image} alt="" width={"350px"} />
               <Stack gap={"25px"}>
-                <Typography variant="h3" component={"h1"} fontSize={"24px"}>
+                <Typography variant="h3" component={"h1"} fontSize={"28px"}>
                   {product.title}
                 </Typography>
                 <Typography fontSize={"18px"}>Mô tả: {product.description ?? "N/A"}</Typography>
@@ -90,9 +110,9 @@ function Detail() {
                     </Typography>
                   </ButtonGroup>
                 </Stack>
-                <Button sx={{ width: '200px' }} variant="outlined" color="primary">
+                <GradientButton>
                   Thêm vào giỏ hàng
-                </Button>
+                </GradientButton>
               </Stack>
             </Stack>
           )}

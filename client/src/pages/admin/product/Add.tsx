@@ -1,7 +1,6 @@
 import {
   Container,
   Stack,
-  Typography,
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -22,7 +21,7 @@ function AdminProductAdd() {
       setTimeout(() => {
         nav("/admin/product/list");
       }, 2000);
-      
+
     } catch (error) {
       setError("Có lỗi xảy ra khi thêm sản phẩm, vui lòng thử lại sau!"); // Thiết lập thông báo lỗi
     }
