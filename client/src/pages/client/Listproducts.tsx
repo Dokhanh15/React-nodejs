@@ -5,6 +5,7 @@ import {
   CardContent,
   CardMedia,
   Stack,
+  styled,
   Typography,
 } from "@mui/material";
 import { FC, useState } from "react";
@@ -25,6 +26,40 @@ const ListProduct: FC<ProductCardProps> = ({ product }) => {
   const handleMouseLeave = () => {
     setHovered(false);
   };
+
+  const GradientButton = styled(Button)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #FE6B8B 50%, white 90%)',
+    backgroundSize: '200% 200%',
+    border: 0,
+    borderRadius: 5,
+    // boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    color: 'white',
+    height: 35,
+    padding: '0 20px',
+    // transition: 'background-position 1s ease',
+    // backgroundPosition: '0% 100%',
+    '&:hover': {
+      // backgroundPosition: '200% 100%',
+      background: 'linear-gradient(45deg, #D25973 50%, #D25973 90%)',
+    },
+  }));
+
+  const GradientButtonBuy = styled(Button)(({ theme }) => ({
+    // background: 'linear-gradient(45deg, #FFFFFF 50%, #FE6B8B 90%)',
+    border: '1px solid',
+    borderColor: '#FE6B8B',
+    // backgroundSize: '200% 200%',
+    borderRadius: 5,
+    color: 'black',
+    height: 35,
+    padding: '0 20px',
+    // transition: 'background-position 1s ease',
+    // backgroundPosition: '0% 100%',
+    '&:hover': {
+      // backgroundPosition: '200% 100%',
+      background: '#E1E1E1'
+    },
+  }));
 
   return (
     <Stack>
@@ -82,17 +117,8 @@ const ListProduct: FC<ProductCardProps> = ({ product }) => {
           </CardMedia>
         </Link>
         <CardActions>
-          <Button size="small" variant="outlined" color="primary">
-            Mua
-          </Button>
-          <Button
-            size="small"
-            variant="contained"
-            color="primary"
-            sx={{ ml: "auto" }}
-          >
-            Thêm vào giỏ hàng
-          </Button>
+          <GradientButtonBuy>Mua</GradientButtonBuy>
+          <GradientButton>Thêm giỏ hàng</GradientButton>
         </CardActions>
       </Card>
     </Stack>

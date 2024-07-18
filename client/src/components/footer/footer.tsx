@@ -6,7 +6,7 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 
 function Footer() {
   return (
-    <Stack sx={{ bgcolor: "#f0f0f0",  width:'1470px', mt: 10}}>
+    <Stack sx={{ bgcolor: "#f0f0f0", width: '100%', mt: 10 }}>
       <Container
         sx={{
           display: "flex",
@@ -19,28 +19,28 @@ function Footer() {
         <Stack
           direction="row"
           spacing={5}
-          sx={{ width: "100%", maxWidth: "1200px", py: 3 }}
+          sx={{ width: "100%", py: 3 }}
         >
           <Stack spacing={2} sx={{ flex: "1" }}>
             <Typography variant="h6" gutterBottom>
               Thông tin chung
             </Typography>
-            <Link sx={{ textDecoration:'none'}} href="#">Chính sách bảo hành</Link>
-            <Link sx={{ textDecoration:'none'}} href="#">Chính sách bảo mật</Link>
-            <Link sx={{ textDecoration:'none'}} href="#">Điều kiện giao dịch chung</Link>
+            <Link sx={{ textDecoration: 'none' }} href="#">Chính sách bảo hành</Link>
+            <Link sx={{ textDecoration: 'none' }} href="#">Chính sách bảo mật</Link>
+            <Link sx={{ textDecoration: 'none' }} href="#">Điều kiện giao dịch chung</Link>
           </Stack>
           <Stack spacing={2} sx={{ flex: "1" }}>
             <Typography variant="h6" gutterBottom>
               Hướng dẫn mua hàng
             </Typography>
-            <Link sx={{ textDecoration:'none'}} href="#">Vận chuyển và giao nhận</Link>
-            <Link sx={{ textDecoration:'none'}} href="#">Phương thức thanh toán</Link>
+            <Link sx={{ textDecoration: 'none' }} href="#">Vận chuyển và giao nhận</Link>
+            <Link sx={{ textDecoration: 'none' }} href="#">Phương thức thanh toán</Link>
           </Stack>
           <Stack spacing={2} sx={{ flex: "1" }}>
             <Typography variant="h6" gutterBottom>
               Kết nối với chúng tôi
             </Typography>
-            <Stack direction="row" spacing={1} sx={{justifyContent:'center'}}>
+            <Stack direction="row" spacing={1} sx={{ justifyContent: 'center' }}>
               <IconButton href="#" sx={{ color: "inherit" }}>
                 <FacebookIcon />
               </IconButton>

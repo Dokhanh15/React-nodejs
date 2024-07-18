@@ -6,6 +6,7 @@ import {
   InputBase,
   Link,
   Stack,
+  styled,
   Toolbar,
   Typography
 } from "@mui/material";
@@ -19,6 +20,39 @@ const Header = () => {
     localStorage.removeItem('Token');
     setUser(null);
   };
+
+  const GradientButton = styled(Button)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #FE6B8B 50%, white 90%)',
+    backgroundSize: '200% 200%',
+    border: 0,
+    borderRadius: 3,
+    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+    color: 'white',
+    height: 48,
+    marginTop: '20px',
+    padding: '0 30px',
+    transition: 'background-position 1s ease',
+    backgroundPosition: '0% 100%',
+    '&:hover': {
+      backgroundPosition: '200% 100%',
+    },
+  }));
+  const GradientButtonLogin = styled(Button)(({ theme }) => ({
+    background: 'linear-gradient(45deg, #FFFFFF 50%, #FE6B8B 90%)',
+    border: 0,
+    backgroundSize: '200% 200%',
+    borderRadius: 3,
+    boxShadow: '0 0 5px 2px rgba(255, 105, 135, .3)',
+    color: 'black',
+    height: 48,
+    marginTop: '20px',
+    padding: '0 30px',
+    transition: 'background-position 1s ease',
+    backgroundPosition: '0% 100%',
+    '&:hover': {
+      backgroundPosition: '200% 100%',
+    },
+  }));
 
   return (
     <AppBar
@@ -67,18 +101,16 @@ const Header = () => {
               <IconButton>
                 <AccountCircleIcon />
               </IconButton>
-              <Button variant="outlined" color="primary" onClick={handleLogout}>
-                Đăng xuất
-              </Button>
+              <GradientButtonLogin onClick={handleLogout}>Đăng xuất</GradientButtonLogin>
             </Stack>
           ) : (
             <Stack direction="row" spacing={2}>
-              <Button variant="outlined" color="primary" href="/login">
+              <GradientButtonLogin type="submit" href="/login">
                 Đăng nhập
-              </Button>
-              <Button variant="contained" color="primary" href="/register">
+              </GradientButtonLogin>
+              <GradientButton type="submit" href="/register">
                 Đăng ký
-              </Button>
+              </GradientButton>
             </Stack>
           )}
         </Stack>

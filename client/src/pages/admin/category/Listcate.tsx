@@ -59,7 +59,7 @@ const Listcate: React.FC = () => {
     <Container>
       <Flash isShow={showFlash} />
       <Stack gap={2}>
-        <Typography variant="h2" textAlign="center">
+        <Typography variant="h3" textAlign="center">
           Danh sách danh mục
         </Typography>
         <Link to="/admin/category/add">

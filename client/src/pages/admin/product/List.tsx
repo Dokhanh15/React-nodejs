@@ -94,9 +94,9 @@ function AdminProductList() {
                 <TableHead>
                   <TableRow>
                     <TableCell>Tiêu đề</TableCell>
+                    <TableCell align="center">Ảnh</TableCell>
                     <TableCell align="right">Giá</TableCell>
                     <TableCell align="right">Mô tả</TableCell>
-                    <TableCell align="center">Ảnh</TableCell>
                     <TableCell align="right">Danh mục</TableCell>
                     <TableCell align="center"></TableCell>
                   </TableRow>
@@ -110,9 +110,9 @@ function AdminProductList() {
                       <TableCell component="th" scope="row">
                         {product.title}
                       </TableCell>
+                      <TableCell align="center"><img src={product.image} alt="" width={50} /></TableCell>
                       <TableCell align="right">{product.price}</TableCell>
                       <TableCell align="right">{product.description}</TableCell>
-                      <TableCell align="center">{product.image}</TableCell>
                       <TableCell align="right">{product.category?.name}</TableCell>
 
                       <TableCell align="center">

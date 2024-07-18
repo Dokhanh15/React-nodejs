@@ -9,7 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ProductForm from "src/components/ProductForm";
 import { Product, ProductFormParams } from "src/types/Product";
 import SnackbarAlert from "src/components/snackbar/Snackbar";
-import Loading from "src/components/loading/loading"; 
+import Loading from "src/components/loading/loading";
 
 function AdminProductEdit() {
   const nav = useNavigate();
@@ -17,7 +17,7 @@ function AdminProductEdit() {
   const [product, setProduct] = useState<Product | undefined>();
   const [showSuccess, setShowSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true); 
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchProduct = async () => {
