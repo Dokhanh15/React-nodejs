@@ -1,18 +1,20 @@
 import { Navigate, useRoutes } from "react-router-dom";
+import NotFound from "./components/404!/Notfound";
+import DynamicInputForm from "./components/Test/Test";
 import AdminLayout from "./layouts/AdminLayout";
-import AdminProductList from "./pages/admin/product/List";
-import AdminProductAdd from "./pages/admin/product/Add";
 import ClientLayout from "./layouts/ClientLayout";
-import Homepage from "./pages/client/Homepage";
-import Detail from "./pages/client/Detail";
-import Register from "./pages/client/Register";
-import Login from "./pages/client/Login";
 import Addcate from "./pages/admin/category/Addcate";
 import Listcate from "./pages/admin/category/Listcate";
-import AdminProductUpdate from "./pages/admin/product/Edit";
-import { UserProvider } from "./pages/client/userContext/userContext";
-import NotFound from "./components/404!/Notfound";
 import Updatecate from "./pages/admin/category/Updatecate";
+import AdminProductAdd from "./pages/admin/product/Add";
+import AdminProductUpdate from "./pages/admin/product/Edit";
+import AdminProductList from "./pages/admin/product/List";
+import Cart from "./pages/client/Cart";
+import Detail from "./pages/client/Detail";
+import Homepage from "./pages/client/Homepage";
+import Login from "./pages/client/Login";
+import Register from "./pages/client/Register";
+import Checkout from "./pages/client/Checkout";
 
 const routeConfig = [
   {
@@ -34,6 +36,18 @@ const routeConfig = [
       {
         path: "login",
         element: <Login />,
+      },
+      {
+        path: "cart",
+        element: <Cart />,
+      },
+      {
+        path: "checkout",
+        element: <Checkout />,
+      },
+      {
+        path: "test",
+        element: <DynamicInputForm />,
       },
     ],
   },
@@ -68,25 +82,27 @@ const routeConfig = [
       },
       {
         path: "category/edit/:id",
-        element: <Updatecate />
-      }
+        element: <Updatecate />,
+      },
     ],
   },
   {
-    path: '/404',
-    element: <NotFound />
+    path: "/404",
+    element: <NotFound />,
   },
   {
-    path: '*',
-    element: <NotFound />
-  }
+    path: "*",
+    element: <NotFound />,
+  },
 ];
-
 
 function App() {
   const routes = useRoutes(routeConfig);
 
-  return <UserProvider>{routes}</UserProvider>;
+  return (
+    <main>{routes}</main>
+    
+  );
 }
 
 export default App;

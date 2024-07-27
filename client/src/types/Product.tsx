@@ -29,3 +29,16 @@ export type ProductFormParams = {
   category: string;
   isShow: boolean;
 };
+
+// Định nghĩa kiểu cho sản phẩm trong giỏ hàng
+export interface CartProduct {
+  product: Product; // Sản phẩm thuộc loại Product
+  quantity: number; // Số lượng sản phẩm
+}
+
+// Định nghĩa kiểu cho giỏ hàng
+export interface Cart {
+  _id: string; // ID của giỏ hàng
+  user: string; // ID của người dùng (hoặc user object nếu cần chi tiết hơn)
+  products: CartProduct[]; // Danh sách sản phẩm trong giỏ hàng
+}

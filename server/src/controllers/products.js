@@ -3,15 +3,29 @@ import Product from "../models/ProductModel";
 import ApiError from "../utils/ApiError";
 
 class ProductsController {
-  // GET /products
-  async getAllProducts(req, res, next) {
-    try {
-      const products = await Product.find().populate("category");
-      res.status(StatusCodes.OK).json(products);
-    } catch (error) {
-      next(error);
-    }
+  // GET /products?page=1&limit=10
+async getAllProducts(req, res, next) {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+
+    const products = await Product.find()
+      .populate("category")
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .exec();
+
+    const count = await Product.countDocuments();
+
+    res.status(StatusCodes.OK).json({
+      products,
+      totalPages: Math.ceil(count / limit),
+      currentPage: Number(page),
+    });
+  } catch (error) {
+    next(error);
   }
+}
+
   // GET /products/:id
   async getProductDetail(req, res, next) {
     try {

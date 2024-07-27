@@ -36,32 +36,30 @@ function AdminProductList() {
   const [idDelete, setIdDelete] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const { setFlash, clearFlash } = useFlash();
-  const [productsPerPage] = useState<number>(6);
+  const [productsPerPage] = useState<number>(8);
   const [error, setError] = useState<string | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const totalPages = Math.ceil(products.length / productsPerPage);
+  const [totalPages, setTotalPages] = useState<number>(1);
 
-  const getAllProduct = async () => {
+  const getAllProduct = async (page = 1) => {
     try {
       setLoading(true);
       clearFlash();
-      // setError(null);
-      const { data } = await axios.get("/products");
-      setProducts(data);
+      setError(null);
+      const { data } = await axios.get(`/products?page=${page}&limit=${productsPerPage}`);
+      setProducts(data.products);
+      setTotalPages(data.totalPages);
+      setCurrentPage(data.currentPage);
     } catch (error) {
-      // setError("Có lỗi xảy ra, vui lòng thử lại sau!");
+      setError("Có lỗi xảy ra, vui lòng thử lại sau!");
       setFlash("Có lỗi xảy ra, vui lòng thử lại sau!", "error");
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    getAllProduct();
-  }, []);
-
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+    getAllProduct(currentPage);
+  }, [currentPage]);
 
   const handleConfirm = (id: string) => {
     setConfirm(true);
@@ -73,7 +71,7 @@ function AdminProductList() {
       await axios.delete("/products/" + idDelete);
       setFlash("Xóa sản phẩm thành công!", "success");
       setShowSuccess(true);
-      getAllProduct();
+      getAllProduct(currentPage);
       setConfirm(false);
       setIdDelete(null);
     } catch (error) {
@@ -121,7 +119,7 @@ function AdminProductList() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {currentProducts.map((product, index) => (
+                  {products.map((product, index) => (
                     <TableRow key={index} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
                       <TableCell component="th" scope="row">{product.title}</TableCell>
                       <TableCell align="center"><img src={product.image} alt="" width={80} /></TableCell>

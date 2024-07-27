@@ -14,17 +14,19 @@ function Homepage() {
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
   const [productsPerPage] = useState<number>(10);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const totalPages = Math.ceil(products.length / productsPerPage);
 
-  const getAllProducts = async () => {
+  const getAllProducts = async (page = 1) => {
     try {
       setLoading(true);
       setError("");
       setSuccess("");
-      const { data } = await axios.get("/products");
-      setProducts(data);
+      const { data } = await axios.get(`/products?page=${page}&limit=${productsPerPage}`);
+      setProducts(data.products);
+      setTotalPages(data.totalPages);
+      setCurrentPage(data.currentPage);
     } catch (error) {
       setError("Có lỗi xảy ra, vui lòng thử lại sau!");
       console.error(error);
@@ -34,19 +36,18 @@ function Homepage() {
   };
 
   useEffect(() => {
-    getAllProducts();
-  }, []);
+    getAllProducts(currentPage);
+  }, [currentPage]);
 
   const handleCloseSnackbar = () => {
     setError("");
     setSuccess("");
   };
 
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
-
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  const paginate = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+    getAllProducts(pageNumber);
+  };
 
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -80,7 +81,7 @@ function Homepage() {
           justifyContent="center"
           sx={{ px: 4, py: 6 }}
         >
-          {currentProducts.map((product, index) => (
+          {products.map((product, index) => (
             <Link key={index} to={`/product/${product._id}`} style={{ textDecoration: "none" }}>
               <ListProduct product={product} />
             </Link>
