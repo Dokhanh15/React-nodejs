@@ -13,15 +13,13 @@ import {
   Typography,
 } from "@mui/material";
 import logo from "../../assets/img/logo.png";
-import { useUser } from "src/pages/client/userContext/userContext";
 import { useMemo } from "react";
 import { useCart } from "src/contexts/Cart";
+import { useUser } from "src/contexts/user";
 
 const Header = () => {
   const { user, setUser } = useUser();
   const { cart } = useCart();
-  console.log(cart);
-  
 
   // Xử lý đăng xuất
   const handleLogout = () => {
@@ -151,7 +149,7 @@ const Header = () => {
           </Typography>
           {user ? (
             <Stack direction="row" spacing={2} alignItems="center">
-              <Link href="/cart">
+              <Link href="/carts">
                 <IconButton color="inherit">
                   <Badge badgeContent={cartQuantity} color="secondary">
                     <ShoppingCartIcon />

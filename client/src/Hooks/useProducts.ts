@@ -23,21 +23,28 @@ export const useProduct = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [setLoading]);
 
   const totalProduct = useMemo(() => products.length, [products]);
 
   useEffect(() => {
     getAllProduct();
-  }, []);
+  }, [getAllProduct]);
 
-  useEffect(() => {
-    if (!id) return;
-    getProductDetail(id);
-  }, [id]);
+  const getProductDetail = useCallback(async (id: string) => {
+    try {
+      setLoading(true);
+      const { data } = await axios.get(`/products/${id}`);
+      setProduct(data);
+    } catch (error) {
+      setError((error as AxiosError)?.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [setLoading]);
 
   const handleDeleteProduct = useCallback(async (id: string) => {
-    if (window.confirm("Xoa that ko?")) {
+    if (window.confirm("Xóa thật không?")) {
       try {
         setLoading(true);
         await axios.delete(`/products/${id}`);
@@ -48,24 +55,12 @@ export const useProduct = () => {
         setLoading(false);
       }
     }
-  }, []);
+  }, [getAllProduct, setLoading]);
 
-  // 3 function
-  const getProductDetail = async (id: string) => {
-    try {
-      setLoading(true);
-      const { data } = await axios.get(`/products/${id}`);
-      setProduct(data);
-    } catch (error) {
-      setError((error as AxiosError)?.message);
-    } finally {
-      setLoading(false);
-    }
-  };
   const handleAddProduct = async (data: Product) => {
     try {
       setLoading(true);
-      await axios.post("products", data);
+      await axios.post("/products", data);
       alert("OK");
       nav("/admin/product/list");
     } catch (error) {
@@ -74,6 +69,7 @@ export const useProduct = () => {
       setLoading(false);
     }
   };
+
   const handleEditProduct = async (data: Product) => {
     try {
       setLoading(true);
@@ -96,5 +92,6 @@ export const useProduct = () => {
     handleDeleteProduct,
     handleAddProduct,
     handleEditProduct,
+    getProductDetail,
   };
 };

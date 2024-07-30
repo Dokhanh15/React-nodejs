@@ -19,6 +19,7 @@ class CartsController {
       next(error);
     }
   }
+
   // GET /carts/:id
   async getCartDetail(req, res, next) {
     try {
@@ -30,6 +31,7 @@ class CartsController {
       next(error);
     }
   }
+
   // GET /carts/:id
   async getCartUser(req, res, next) {
     try {
@@ -40,37 +42,58 @@ class CartsController {
           model: Product,
         },
       });
-      // if (!cart) throw new ApiError(404, "Cart Not Found");
       res.status(StatusCodes.OK).json(cart);
     } catch (error) {
       next(error);
     }
   }
+
   // POST /carts
   async createCart(req, res, next) {
     try {
       const { quantity, user, product } = req.body;
       const cart = await Cart.findOne({ user });
-      if (cart)
-        throw new ApiError(404, "Cart Existed, You can only Update Cart");
-      const newCart = await Cart.create({
-        user,
-        products: [
-          {
-            product,
-            quantity,
-          },
-        ],
-      });
-      res.status(StatusCodes.CREATED).json({
-        message: "Add Cart Successfull",
-        data: newCart,
-      });
+
+      if (cart) {
+        // Thay đổi giỏ hàng thay vì tạo mới
+        const productExisted = cart.products.find(
+          (item) => item.product == product
+        );
+
+        if (productExisted) {
+          // Cập nhật số lượng sản phẩm nếu sản phẩm đã tồn tại trong giỏ hàng
+          productExisted.quantity += quantity;
+        } else {
+          // Thêm sản phẩm mới vào giỏ hàng nếu sản phẩm chưa tồn tại
+          cart.products.push({ product, quantity });
+        }
+
+        await cart.save();
+        res.status(StatusCodes.OK).json({
+          message: "Cart updated successfully",
+          data: cart,
+        });
+      } else {
+        const newCart = await Cart.create({
+          user,
+          products: [
+            {
+              product,
+              quantity,
+            },
+          ],
+        });
+        res.status(StatusCodes.CREATED).json({
+          message: "Cart created successfully",
+          data: newCart,
+        });
+      }
     } catch (error) {
       next(error);
     }
   }
 
+  // PUT /carts/:id
   async updateCart(req, res, next) {
     try {
       const { quantity, user, product } = req.body;
@@ -108,6 +131,7 @@ class CartsController {
       next(error);
     }
   }
+
   async deleteProductCart(req, res, next) {
     try {
       const { userId, id } = req.params;
@@ -132,6 +156,7 @@ class CartsController {
       next(error);
     }
   }
+
   // DELETE /carts/:id
   async deleteCart(req, res, next) {
     try {

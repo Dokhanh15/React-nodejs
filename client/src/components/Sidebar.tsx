@@ -42,7 +42,7 @@ const SidebarItem = styled(ListItem)(({ active }) => ({
 const Sidebar = () => {
   const [selectedIndex, setSelectedIndex] = React.useState(0);
 
-  const handleListItemClick = (event, index) => {
+  const handleListItemClick = (event:any, index:any) => {
     setSelectedIndex(index);
   };
 

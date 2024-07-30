@@ -18,31 +18,38 @@ export const useProductCart = () => {
     setUser(user);
     if (!user._id) return;
     const { data } = await axios.get(`/carts/user/${user._id}`);
+    console.log("Cart data from API:", data); 
     setCart(data);
   };
 
   const addToCart = async ({ product, quantity }: AddToCart) => {
     if (quantity <= 0 || !user) return;
     try {
+      let updatedCart;
       if (cart) {
-        await axios.put(`/carts/${cart._id}`, {
+       const {data} = await axios.put(`/carts/${cart._id}`, {
           product,
           quantity,
           user: user._id,
         });
+        updatedCart = data;
       } else {
-        await axios.post("/carts", {
+        const { data } = await axios.post("/carts", {
           product,
           quantity,
           user: user._id,
         });
+        updatedCart = data;
       }
       const { data } = await axios.get(`/carts/user/${user._id}`);
-      setCart(data);
+      updatedCart = data;
+      setCart(updatedCart);
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
     } catch (error) {
       console.log(error);
     }
   };
+
   const removeToCart = async (productId: string) => {
     if (!user) return;
     if (window.confirm("Remove Item Cart")) {
@@ -54,5 +61,6 @@ export const useProductCart = () => {
       }
     }
   };
+
   return { addToCart, removeToCart, getCartUser };
 };

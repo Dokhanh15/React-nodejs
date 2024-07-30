@@ -1,17 +1,18 @@
-import React, { createContext, useState, useContext, ReactNode } from "react";
-import { Users } from "src/types/user";
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import axiosInstance from 'src/pages/client/axiosInstance/axiosInstance';
+import { Users } from 'src/types/user';
 
-interface UserContextType {
+interface UserContextProps {
   user: Users | null;
-  setUser: React.Dispatch<React.SetStateAction<Users | null>>;
+  setUser: (user: Users | null) => void;
 }
 
-const UserContext = createContext<UserContextType | undefined>(undefined);
+const UserContext = createContext<UserContextProps | undefined>(undefined);
 
-export const useUser = (): UserContextType => {
+export const useUser = () => {
   const context = useContext(UserContext);
   if (!context) {
-    throw new Error("useuser must be used within a userProvider");
+    throw new Error('useUser must be used within a UserProvider');
   }
   return context;
 };
@@ -20,8 +21,28 @@ interface UserProviderProps {
   children: ReactNode;
 }
 
-export const UsercartProvider: React.FC<UserProviderProps> = ({ children }) => {
+export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<Users | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem('Token');
+        if (token) {
+          const response = await axiosInstance.get('/auth', {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          setUser(response.data);
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        console.error('Failed to fetch user:', error);
+        setUser(null);
+      }
+    };
+    fetchUser();
+  }, []);
 
   return (
     <UserContext.Provider value={{ user, setUser }}>

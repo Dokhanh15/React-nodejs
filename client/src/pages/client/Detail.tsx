@@ -16,7 +16,7 @@ import Loading from "src/components/loading/loading";
 import { useProductCart } from "src/Hooks/CartProducts";
 import { Product } from "src/types/Product";
 import { useLoading } from "src/contexts/loading";
-import SnackbarAlert from "src/components/snackbar/Snackbar";
+import { useUser } from "src/contexts/user";
 
 const GradientButton = styled(Button)(({ theme }) => ({
   background: "linear-gradient(45deg, #FE6B8B 50%, white 90%)",
@@ -36,12 +36,12 @@ const GradientButton = styled(Button)(({ theme }) => ({
 
 function Detail() {
   const { addToCart } = useProductCart();
+  const { user } = useUser();
   const { id } = useParams();
   const navigate = useNavigate();
   const { loading, setLoading } = useLoading();
   const [product, setProduct] = useState<Product | null>(null);
-  const [quantity, setQuantity] = useState<number>(1);
-  const [showAlert, setShowAlert] = useState<string | null>(null);
+  const [quantity, setQuantity] = useState<number>(0);
 
   useEffect(() => {
     if (!id) return;
@@ -69,6 +69,11 @@ function Detail() {
   };
 
   const handleAddToCart = (product: Product) => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
     if (quantity <= 0) return;
     addToCart({ product, quantity });
     console.log(product);

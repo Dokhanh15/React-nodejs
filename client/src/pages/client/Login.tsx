@@ -7,7 +7,7 @@ import SnackbarAlert from "../../components/snackbar/Snackbar";
 import Loading from "src/components/loading/loading";
 import { Users } from "src/types/user";
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { useUser } from "./userContext/userContext";
+import { useUser } from "src/contexts/user";
 
 const Login = () => {
   const { register, handleSubmit, reset, formState: { errors } } = useForm<Users>();

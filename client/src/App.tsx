@@ -38,7 +38,7 @@ const routeConfig = [
         element: <Login />,
       },
       {
-        path: "cart",
+        path: "carts",
         element: <Cart />,
       },
       {
