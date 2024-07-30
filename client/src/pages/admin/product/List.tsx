@@ -1,3 +1,6 @@
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 import {
   Button,
   Container,
@@ -12,22 +15,86 @@ import {
   Typography,
   IconButton,
   Menu,
-  MenuItem
-} from "@mui/material";
+  MenuItem,
+  TextField
+} from '@mui/material';
+import { styled } from '@mui/system';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import ConfirmDialog from "src/components/ConfirmDialog";
-import SnackbarAlert from "src/components/snackbar/Snackbar";
-import { Product } from "src/types/Product";
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { useLoading } from "src/contexts/loading";
-import Loading from "src/components/loading/loading";
+import ConfirmDialog from 'src/components/ConfirmDialog';
+import SnackbarAlert from 'src/components/snackbar/Snackbar';
+import Loading from 'src/components/loading/loading';
+import { useLoading } from 'src/contexts/loading';
+import filter from 'src/assets/img/more.png';
+import searchIcon from 'src/assets/img/search.png';
+import { Category, Product } from 'src/types/Product';
 
-function AdminProductList() {
+const StyledTextField = styled(TextField)(({ theme, isVisible }) => ({
+  transition: 'width 0.5s, opacity 0.5s',
+  width: isVisible ? '200px' : '0',
+  opacity: isVisible ? 1 : 0,
+  '& .MuiOutlinedInput-root': {
+    '& fieldset': {
+      borderColor: '#E63673',
+    },
+    '&:hover fieldset': {
+      borderColor: '#E63673',
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: '#E63673',
+    },
+  },
+  marginLeft: isVisible ? theme.spacing(1) : 0,
+}));
+
+const StyledMenuItem = styled(MenuItem)(() => ({
+  position: 'relative',
+  overflow: 'hidden',
+  '&::after': {
+    content: '""',
+    position: 'absolute',
+    bottom: 0,
+    left: '-100%',
+    width: '100%',
+    height: '2px',
+    backgroundColor: '#E63673',
+    transition: 'left 0.3s ease-out',
+  },
+  '&:hover::after': {
+    left: 0,
+  },
+}));
+
+const PaginationButton = styled(Button)(() => ({
+  position: 'relative',
+  overflow: 'hidden',
+  padding: '3px',
+  minWidth: '40px',
+  borderRadius: '2px',
+  boxShadow: '2px 2px 5px rgba(0,0,0,0.2)',
+  backgroundColor: 'white',
+  color: 'black',
+  '&:hover': {
+    backgroundColor: 'grey.200',
+  },
+  '&::after': {
+    content: '""',
+    position: 'absolute',
+    bottom: 0,
+    left: '-100%',
+    width: '100%',
+    height: '2px',
+    backgroundColor: '#E63673',
+    transition: 'left 0.3s ease-out',
+  },
+  '&:hover::after': {
+    left: 0,
+  },
+}));
+
+const AdminProductList = () => {
   const { loading, setLoading } = useLoading();
   const [showSuccess, setShowSuccess] = useState(false);
   const [confirm, setConfirm] = useState(false);
@@ -37,13 +104,23 @@ function AdminProductList() {
   const [productsPerPage] = useState<number>(6);
   const [error, setError] = useState<string | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const totalPages = Math.ceil(products.length / productsPerPage);
+  const [filterAnchorEl, setFilterAnchorEl] = useState<null | HTMLElement>(null);
+  const [search, setSearch] = useState<string>("");
+  const [isSearchVisible, setIsSearchVisible] = useState<boolean>(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const getAllProduct = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get("/products");
-      setProducts(data);
+      const { data } = await axios.get('/products');
+      let filteredData = data;
+      if (selectedCategory) {
+        filteredData = filteredData.filter((product: Product) =>
+          product.category?.name === selectedCategory
+        );
+      }
+      setProducts(filteredData);
     } catch (error) {
       // setFlash("Có lỗi xảy ra, vui lòng thử lại sau!", "error");
     }
@@ -52,11 +129,45 @@ function AdminProductList() {
 
   useEffect(() => {
     getAllProduct();
+  }, [selectedCategory]);
+
+  const filterProducts = () => {
+    let filteredData = products;
+    if (search) {
+      filteredData = filteredData.filter((product: { title: string }) =>
+        product.title.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+    if (selectedCategory) {
+      filteredData = filteredData.filter((product: Product) =>
+        product.category?.name === selectedCategory
+      );
+    }
+    return filteredData;
+  };
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data } = await axios.get('/categories');
+        setCategories(data);
+      } catch (error) {
+        console.error('Error fetching categories', error);
+      }
+    };
+
+    fetchCategories();
   }, []);
 
-  const indexOfLastProduct = currentPage * productsPerPage;
+  const filteredProducts = filterProducts();
+
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / productsPerPage));
+  const boundedCurrentPage = Math.min(Math.max(currentPage, 1), totalPages);
+  const pageNumbers = [...Array(totalPages).keys()].map(n => n + 1);
+
+  const indexOfLastProduct = boundedCurrentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
 
   const handleConfirm = (id: string) => {
     setConfirm(true);
@@ -65,17 +176,21 @@ function AdminProductList() {
 
   const handleDelete = async () => {
     try {
-      await axios.delete("/products/" + idDelete);
+      await axios.delete(`/products/${idDelete}`);
       setShowSuccess(true);
       getAllProduct();
       setConfirm(false);
       setIdDelete(null);
     } catch (error) {
-      setError("Có lỗi xảy ra khi xóa sản phẩm, vui lòng thử lại sau!");
+      setError('Có lỗi xảy ra khi xóa sản phẩm, vui lòng thử lại sau!');
     }
   };
 
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  const paginate = (pageNumber: number) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
 
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -85,125 +200,222 @@ function AdminProductList() {
     setAnchorEl(null);
   };
 
+  const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setFilterAnchorEl(event.currentTarget);
+  };
+
+  const handleFilterClose = () => {
+    setFilterAnchorEl(null);
+  };
+
+  const handleSearchIconClick = () => {
+    setIsSearchVisible(!isSearchVisible);
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+  };
+
+  const renderPaginationButtons = () => {
+    return pageNumbers.map(number => (
+      <PaginationButton
+        key={number}
+        onClick={() => paginate(number)}
+        sx={{
+          color: number === boundedCurrentPage ? 'white' : 'black',
+          bgcolor: number === boundedCurrentPage ? 'black' : 'white',
+          fontWeight: number === boundedCurrentPage ? 'bold' : 'normal',
+          '&:hover': {
+            bgcolor: number === boundedCurrentPage ? 'black' : 'grey.200'
+          }
+        }}
+      >
+        {number}
+      </PaginationButton>
+    ));
+  };
+
   return (
     <>
       <Container>
-
         <Stack gap={2}>
-          <Typography variant="h3" textAlign={"center"}>
+          <Typography variant="h3" textAlign="center">
             Danh sách sản phẩm
           </Typography>
-          <Link to="/admin/product/add">
-            <Button variant="contained" color="primary">
-              <AddIcon /> Thêm sản phẩm
-            </Button>
-          </Link>
           {loading ? (
             <Loading isShow={loading} />
           ) : (
-            <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 1000, textAlign: "center" }} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Tiêu đề</TableCell>
-                    <TableCell align="center">Ảnh</TableCell>
-                    <TableCell align="right">Giá</TableCell>
-                    <TableCell align="right">Mô tả</TableCell>
-                    <TableCell align="right">Danh mục</TableCell>
-                    <TableCell align="center"></TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {currentProducts.map((product, index) => (
-                    <TableRow key={index} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-                      <TableCell component="th" scope="row">{product.title}</TableCell>
-                      <TableCell align="center"><img src={product.image} alt="" width={80} /></TableCell>
-                      <TableCell align="right">{product.price}</TableCell>
-                      <TableCell align="right">{product.description}</TableCell>
-                      <TableCell align="right">{product.category?.name}</TableCell>
-                      <TableCell align="center">
-                        <Stack direction={"row"} gap={3} justifyContent={"center"}>
-                          <Link to={`/admin/product/edit/${product._id}`}>
-                            <Button variant="contained" color="warning">
-                              <EditIcon /> Sửa
-                            </Button>
-                          </Link>
-                          <Button color="error" variant="contained" onClick={() => handleConfirm(product._id)}>
-                            <DeleteForeverIcon /> Xóa
-                          </Button>
-                        </Stack>
-                      </TableCell>
+            <>
+              <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Stack direction="row" gap={1}>
+                  <IconButton onClick={handleFilterClick}>
+                    <img src={filter} width={25} />
+                  </IconButton>
+                  <Menu anchorEl={filterAnchorEl} open={Boolean(filterAnchorEl)} onClose={handleFilterClose}>
+                    <StyledMenuItem
+                      onClick={() => {
+                        setSelectedCategory(null);
+                        handleFilterClose();
+                        getAllProduct();
+                      }}
+                    >
+                      Tất cả sản phẩm
+                    </StyledMenuItem>
+                    {categories.map((category) => (
+                      <StyledMenuItem
+                        key={category._id}
+                        onClick={() => {
+                          setSelectedCategory(category.name);
+                          handleFilterClose();
+                          getAllProduct();
+                        }}
+                      >
+                        {category.name}
+                      </StyledMenuItem>
+                    ))}
+                  </Menu>
+                </Stack>
+
+                <Stack direction="row" gap={1} alignItems="center">
+                  <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                    <IconButton onClick={handleSearchIconClick}>
+                      <img src={searchIcon} width={25} />
+                    </IconButton>
+                    <StyledTextField
+                      variant="outlined"
+                      size="small"
+                      value={search}
+                      onChange={handleSearchChange}
+                      placeholder="Tìm kiếm sản phẩm"
+                      isVisible={isSearchVisible}
+                    />
+                  </div>
+
+                  <Link to="/admin/product/add" style={{ width: '200px' }}>
+                    <Button variant="contained" color="primary" sx={{ width: '100%' }}>
+                      <AddIcon /> Thêm sản phẩm
+                    </Button>
+                  </Link>
+                </Stack>
+              </Stack>
+              <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 1000, textAlign: 'center' }} aria-label="simple table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Tiêu đề</TableCell>
+                      <TableCell align="center">Ảnh</TableCell>
+                      <TableCell align="right">Giá</TableCell>
+                      <TableCell align="right">Mô tả</TableCell>
+                      <TableCell align="right">Danh mục</TableCell>
+                      <TableCell align="center"></TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              <ConfirmDialog confirm={confirm} onConfirm={setConfirm} onDelete={handleDelete} />
-            </TableContainer>
+                  </TableHead>
+                  <TableBody>
+                    {currentProducts.map((product, index) => (
+                      <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                        <TableCell component="th" scope="row">
+                          {product.title}
+                        </TableCell>
+                        <TableCell align="center">
+                          <img src={product.image} alt="" width={80} />
+                        </TableCell>
+                        <TableCell align="right">{product.price}</TableCell>
+                        <TableCell align="right">{product.description}</TableCell>
+                        <TableCell align="right">{product.category?.name}</TableCell>
+                        <TableCell align="center">
+                          <Stack direction={'row'} gap={3} justifyContent={'center'}>
+                            <Link to={`/admin/product/edit/${product._id}`}>
+                              <Button variant="contained" color="warning">
+                                <EditIcon /> Sửa
+                              </Button>
+                            </Link>
+                            <Button color="error" variant="contained" onClick={() => handleConfirm(product._id)}>
+                              <DeleteForeverIcon /> Xóa
+                            </Button>
+                          </Stack>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                <ConfirmDialog confirm={confirm} onConfirm={setConfirm} onDelete={handleDelete} />
+              </TableContainer>
+            </>
           )}
 
-          {/* Phân trang */}
-          <Stack gap={1} direction="row" justifyContent="center" mt={2}>
-            {currentPage > 3 && (
-              <Button
-                onClick={() => paginate(1)}
-                sx={{ mx: 0.5, minWidth: 40, borderRadius: 2, boxShadow: 2, bgcolor: 'white', color: 'black', '&:hover': { bgcolor: 'primary.dark' } }}
-              >
-                1
-              </Button>
-            )}
-            {currentPage > 3 && (
-              <IconButton
-                onClick={handleMenuClick}
-                sx={{ mx: 0.5, borderRadius: 2, boxShadow: 2, bgcolor: 'white', color: 'black', '&:hover': { bgcolor: 'primary.dark' } }}
-              >
-                <MoreHorizIcon />
-              </IconButton>
-            )}
-            {[...Array(totalPages).keys()]
-              .map(n => n + 1)
-              .filter(n => n >= currentPage - 1 && n <= currentPage + 1)
-              .map(number => (
-                <Button
-                  key={number}
-                  onClick={() => paginate(number)}
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <Stack gap={1} direction="row" justifyContent="center" mt={2}>
+              {boundedCurrentPage > 1 && (
+                <PaginationButton
+                  onClick={() => paginate(1)}
                   sx={{
-                    padding: '3px',
-                    color: number === currentPage ? 'white' : 'black',
-                    bgcolor: number === currentPage ? 'black' : 'white',
-                    fontWeight: number === currentPage ? 'bold' : 'normal',
-                    borderRadius: 2,
-                    boxShadow: 2,
                     mx: 0.5,
                     minWidth: 40,
-                    '&:hover': {
-                      bgcolor: number === currentPage ? 'black' : 'grey.200'
-                    }
+                    // borderRadius: 2,
+                    boxShadow: 2,
+                    bgcolor: 'white',
+                    color: 'black',
+                    '&:hover': { bgcolor: 'primary.dark' }
                   }}
                 >
-                  {number}
-                </Button>
-              ))}
-            {currentPage < totalPages - 2 && (
-              <IconButton
-                onClick={handleMenuClick}
-                sx={{ mx: 0.5, borderRadius: 2, boxShadow: 2, bgcolor: 'white', color: 'black', '&:hover': { bgcolor: 'primary.dark' } }}
-              >
-                <MoreHorizIcon />
-              </IconButton>
-            )}
-            {currentPage < totalPages - 2 && (
-              <Button
-                onClick={() => paginate(totalPages)}
-                sx={{ mx: 0.5, minWidth: 40, borderRadius: 2, boxShadow: 2, bgcolor: 'white', color: 'black', '&:hover': { bgcolor: 'primary.dark' } }}
-              >
-                {totalPages}
-              </Button>
-            )}
-            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-              {[...Array(totalPages).keys()]
-                .map(n => n + 1)
-                .filter(n => n < currentPage - 1 || n > currentPage + 1)
-                .map(number => (
+                  Đầu trang
+                </PaginationButton>
+              )}
+
+              {boundedCurrentPage > 2 && (
+                <PaginationButton
+                  onClick={handleMenuClick}
+                  sx={{
+                    mx: 0.5,
+                    // borderRadius: 2,
+                    boxShadow: 2,
+                    bgcolor: 'white',
+                    color: 'black',
+                    '&:hover': { bgcolor: 'primary.dark' }
+                  }}
+                >
+                  <MoreHorizIcon />
+                </PaginationButton>
+              )}
+
+              {renderPaginationButtons()}
+
+              {boundedCurrentPage < totalPages && (
+                <>
+                  {boundedCurrentPage < totalPages - 1 && (
+                    <PaginationButton
+                      onClick={handleMenuClick}
+                      sx={{
+                        mx: 0.5,
+                        borderRadius: 0,
+                        boxShadow: 2,
+                        bgcolor: 'white',
+                        color: 'black',
+                        '&:hover': { bgcolor: 'primary.dark' }
+                      }}
+                    >
+                      <MoreHorizIcon />
+                    </PaginationButton>
+                  )}
+                  <PaginationButton
+                    onClick={() => paginate(totalPages)}
+                    sx={{
+                      mx: 0.5,
+                      minWidth: 40,
+                      boxShadow: 2,
+                      bgcolor: 'white',
+                      color: 'black',
+                      '&:hover': { bgcolor: 'primary.dark' }
+                    }}
+                  >
+                    Cuối trang
+                  </PaginationButton>
+                </>
+              )}
+
+              <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+                {pageNumbers.filter(n => n < boundedCurrentPage - 1 || n > boundedCurrentPage + 1).map(number => (
                   <MenuItem
                     key={number}
                     onClick={() => {
@@ -214,30 +426,31 @@ function AdminProductList() {
                     {number}
                   </MenuItem>
                 ))}
-            </Menu>
-          </Stack>
+              </Menu>
+            </Stack>
+          )}
+
+          {error && (
+            <SnackbarAlert
+              message={error}
+              severity="error"
+              open={Boolean(error)}
+              onClose={() => setError(null)}
+            />
+          )}
+
+          {showSuccess && (
+            <SnackbarAlert
+              message="Xóa sản phẩm thành công!"
+              severity="success"
+              open={showSuccess}
+              onClose={() => setShowSuccess(false)}
+            />
+          )}
         </Stack>
-
-        {error && (
-          <SnackbarAlert
-            message={error}
-            severity="error"
-            open={Boolean(error)}
-            onClose={() => setError(null)}
-          />
-        )}
-
-        {showSuccess && (
-          <SnackbarAlert
-            message="Xóa sản phẩm thành công!"
-            severity="success"
-            open={showSuccess}
-            onClose={() => setShowSuccess(false)}
-          />
-        )}
       </Container>
     </>
   );
-}
+};
 
 export default AdminProductList;

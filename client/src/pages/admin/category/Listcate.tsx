@@ -62,8 +62,8 @@ const Listcate: React.FC = () => {
         <Typography variant="h3" textAlign="center">
           Danh sách danh mục
         </Typography>
-        <Link to="/admin/category/add">
-          <Button variant="contained" color='primary'>
+        <Link to="/admin/category/add" style={{ width: "200px" }}>
+          <Button variant="contained" color='primary' sx={{ width: "100%" }}>
             <AddIcon /> Thêm danh mục
           </Button>
         </Link>

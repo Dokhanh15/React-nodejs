@@ -1,12 +1,13 @@
-import { Grid, Stack, Button, IconButton, Menu, MenuItem } from "@mui/material";
+import { Grid, Stack, Button, IconButton, MenuItem, Menu } from "@mui/material";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Loading from "src/components/loading/loading";
-import { Product } from "src/types/Product";
+import { Category, Product } from "src/types/Product";
 import SnackbarAlert from "../../components/snackbar/Snackbar";
 import { Link } from "react-router-dom";
 import ListProduct from "./Listproducts";
+import Header from "src/components/header/header";
 
 function Homepage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -16,14 +17,18 @@ function Homepage() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [productsPerPage] = useState<number>(10);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const totalPages = Math.ceil(products.length / productsPerPage);
 
-  const getAllProducts = async () => {
+  const getAllProducts = async (category: string | null = null) => {
     try {
       setLoading(true);
       setError("");
       setSuccess("");
-      const { data } = await axios.get("/products");
+      const { data } = await axios.get("/products", {
+        params: { category },
+      });
       setProducts(data);
     } catch (error) {
       setError("Có lỗi xảy ra, vui lòng thử lại sau!");
@@ -33,9 +38,29 @@ function Homepage() {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const { data } = await axios.get('/categories');
+      setCategories(data);
+    } catch (error) {
+      console.error('Error fetching categories', error);
+    }
+  };
+
   useEffect(() => {
-    getAllProducts();
-  }, []);
+    if (selectedCategory) { // Thêm điều kiện để kiểm tra nếu selectedCategory không phải null
+      getAllProducts(selectedCategory);
+    } else {
+      getAllProducts(); // Hoặc gọi với giá trị mặc định nếu cần
+    }
+    fetchCategories();
+  }, [selectedCategory]);
+
+
+  const handleCategorySelect = (category: string) => {
+    setSelectedCategory(category);
+    setCurrentPage(1); // Reset to first page
+  };
 
   const handleCloseSnackbar = () => {
     setError("");
@@ -58,6 +83,7 @@ function Homepage() {
 
   return (
     <>
+      <Header onCategorySelect={handleCategorySelect} />
       <Loading isShow={loading} />
       <Grid container spacing={4} justifyContent="center" mt={3}>
         <SnackbarAlert

@@ -6,7 +6,7 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 
 function Footer() {
   return (
-    <Stack sx={{ bgcolor: "#f0f0f0", width: '100%', mt: 10 }}>
+    <Stack sx={{ bgcolor: "#f0f0f0", mt: 10 }}>
       <Container
         sx={{
           display: "flex",

@@ -8,17 +8,17 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import Logo from 'src/assets/img/admin-removebg-preview.png';
 import { Link } from 'react-router-dom';
 
-const SidebarContainer = styled('div')(({ theme }) => ({
+const SidebarContainer = styled('div')(() => ({
   width: '250px',
   backgroundColor: '#36363C',
   color: '#fff',
-  height: '155vh',
+  height: '160vh',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
 }));
 
-const LogoContainer = styled('div')(({ theme }) => ({
+const LogoContainer = styled('div')(() => ({
   width: '100%',
   display: 'flex',
   justifyContent: 'center',
@@ -42,7 +42,7 @@ const SidebarItem = styled(ListItem)(({ active }) => ({
 const Sidebar = () => {
   const [selectedIndex, setSelectedIndex] = React.useState(0);
 
-  const handleListItemClick = (event, index) => {
+  const handleListItemClick = (_event: React.MouseEvent<HTMLLIElement, MouseEvent>, index: React.SetStateAction<number>) => {
     setSelectedIndex(index);
   };
 
