@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Category } from "src/types/Product";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-
 import { useMemo } from "react";
 import { useCart } from "src/contexts/Cart";
 import { useUser } from "src/contexts/user";
@@ -62,13 +61,13 @@ const MenuItemStyled = styled(MenuItem)(() => ({
   },
 }));
 
-const Header = ({ onCategorySelect }) => {
+const Header = ({ onCategorySelect, onSearch }) => {
   const { user, setUser } = useUser();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const { cart } = useCart();
 
-  // Xử lý đăng xuất
   const handleLogout = () => {
     localStorage.removeItem("Token");
     setUser(null);
@@ -95,7 +94,19 @@ const Header = ({ onCategorySelect }) => {
     setAnchorEl(null);
   };
 
-  // Tính số lượng sản phẩm trong giỏ hàng
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+    // Nếu chuỗi tìm kiếm rỗng, gọi onSearch với chuỗi rỗng
+    if (event.target.value === '') {
+      onSearch('');
+    }
+  };
+
+  const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    onSearch(searchQuery);
+  };
+
   const cartQuantity = useMemo(
     () =>
       cart
@@ -125,17 +136,16 @@ const Header = ({ onCategorySelect }) => {
             <Link href="#" color="black" underline="none" onMouseEnter={handleCategoryClick} sx={{ "&:hover": { borderBottom: "1px solid" } }}>
               Danh mục
             </Link>
-            {/* <Link href="#" color="black" underline="none" sx={{ "&:hover": { borderBottom: "1px solid" } }}>Courses <span className="dropdown-toggle"></span></Link>
-            <Link href="#" color="black" underline="none" sx={{ "&:hover": { borderBottom: "1px solid" } }}>Jobs</Link>
-            <Link href="#" color="black" underline="none" sx={{ "&:hover": { borderBottom: "1px solid" } }}>Go Pro</Link> */}
           </Stack >
         </Stack >
 
         <Stack direction="row" spacing={2} alignItems="center">
-          <Typography sx={{ position: "relative" }}>
+          <form onSubmit={handleSearchSubmit}>
             <InputBase
               type="search"
-              placeholder="Search..."
+              placeholder="Tìm kiếm..."
+              value={searchQuery}
+              onChange={handleSearchChange}
               sx={{
                 px: 2,
                 py: 1,
@@ -146,7 +156,7 @@ const Header = ({ onCategorySelect }) => {
               }}
               inputProps={{ "aria-label": "search" }}
             />
-          </Typography>
+          </form>
           {user ? (
             <Stack direction="row" spacing={2} alignItems="center">
               <Link href="/carts">
