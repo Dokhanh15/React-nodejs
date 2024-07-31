@@ -1,23 +1,11 @@
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import {
-  AppBar,
-  Badge,
-  Button,
-  IconButton,
-  InputBase,
-  Menu,
-  MenuItem,
-  Stack,
-  styled,
-  Toolbar,
-  Typography,
-} from "@mui/material";
-import { Link, Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
 import logo from "../../assets/img/logo.png";
 import { useMemo, useState, useEffect } from "react";
 import axios from "axios";
 import { Category } from "src/types/Product";
+import { AppBar, Button, IconButton, InputBase, Link, Stack, styled, Toolbar, Typography, Menu, MenuItem, Badge } from "@mui/material";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useCart } from "src/contexts/Cart";
 import { useUser } from "src/contexts/user";
 
@@ -73,13 +61,13 @@ const MenuItemStyled = styled(MenuItem)(() => ({
   },
 }));
 
-const Header = ({ onCategorySelect }) => {
+const Header = ({ onCategorySelect, onSearch }) => {
   const { user, setUser } = useUser();
-  const { cart } = useCart();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const { cart } = useCart();
 
-  // Xử lý đăng xuất
   const handleLogout = () => {
     localStorage.removeItem("Token");
     setUser(null);
@@ -106,7 +94,19 @@ const Header = ({ onCategorySelect }) => {
     setAnchorEl(null);
   };
 
-  // Tính số lượng sản phẩm trong giỏ hàng
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+    // Nếu chuỗi tìm kiếm rỗng, gọi onSearch với chuỗi rỗng
+    if (event.target.value === '') {
+      onSearch('');
+    }
+  };
+
+  const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    onSearch(searchQuery);
+  };
+
   const cartQuantity = useMemo(
     () =>
       cart
@@ -149,19 +149,23 @@ const Header = ({ onCategorySelect }) => {
         </Stack>
 
         <Stack direction="row" spacing={2} alignItems="center">
-          <InputBase
-            type="search"
-            placeholder="Search..."
-            sx={{
-              px: 2,
-              py: 1,
-              borderRadius: 10,
-              border: "1px solid #ccc",
-              bgcolor: "#fff",
-              "&:focus": { borderColor: "#aaa" },
-            }}
-            inputProps={{ "aria-label": "search" }}
-          />
+          <form onSubmit={handleSearchSubmit}>
+            <InputBase
+              type="search"
+              placeholder="Tìm kiếm..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              sx={{
+                px: 2,
+                py: 1,
+                borderRadius: 10,
+                border: "1px solid #ccc",
+                bgcolor: "#fff",
+                "&:focus": { borderColor: "#aaa" },
+              }}
+              inputProps={{ "aria-label": "search" }}
+            />
+          </form>
           {user ? (
             <Stack direction="row" spacing={2} alignItems="center">
               <RouterLink to="/carts">
@@ -190,7 +194,7 @@ const Header = ({ onCategorySelect }) => {
             </Stack>
           )}
         </Stack>
-      </Toolbar>
+      </Toolbar >
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -219,7 +223,7 @@ const Header = ({ onCategorySelect }) => {
           </MenuItemStyled>
         ))}
       </Menu>
-    </AppBar>
+    </AppBar >
   );
 };
 

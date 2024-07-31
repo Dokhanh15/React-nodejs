@@ -7,7 +7,7 @@ class ProductsController {
   // GET /products
   async getAllProducts(req, res, next) {
     try {
-      const { category } = req.query; // Lấy tham số category từ query string
+      const { category, query } = req.query; // Lấy tham số category từ query string
       let filter = {};
       if (category) {
         // Tìm ObjectId của category dựa trên tên của nó
@@ -18,12 +18,16 @@ class ProductsController {
           return res.status(StatusCodes.OK).json([]);
         }
       }
+      if (query) {
+        filter.title = { $regex: query, $options: 'i' }; // Tìm kiếm không phân biệt hoa thường
+      }
       const products = await Product.find(filter).populate("category");
       res.status(StatusCodes.OK).json(products);
     } catch (error) {
       next(error);
     }
   }
+
 
   // GET /products/:id
   async getProductDetail(req, res, next) {

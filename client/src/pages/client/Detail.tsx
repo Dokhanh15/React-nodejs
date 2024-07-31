@@ -18,7 +18,7 @@ import { Product } from "src/types/Product";
 import { useLoading } from "src/contexts/loading";
 import { useUser } from "src/contexts/user";
 
-const GradientButton = styled(Button)(({ theme }) => ({
+const GradientButton = styled(Button)(() => ({
   background: "linear-gradient(45deg, #FE6B8B 50%, white 90%)",
   backgroundSize: "200% 200%",
   border: 0,
@@ -77,7 +77,7 @@ function Detail() {
     if (quantity <= 0) return;
     addToCart({ product, quantity });
     console.log(product);
-    
+
   };
 
   return (

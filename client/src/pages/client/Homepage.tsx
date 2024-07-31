@@ -1,13 +1,41 @@
+import { Grid, Stack, Button } from "@mui/material";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { Button, Grid, IconButton, Menu, MenuItem, Stack } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import Header from "src/components/header/header";
 import Loading from "src/components/loading/loading";
-import { Category, Product } from "src/types/Product";
+import { Product } from "src/types/Product";
 import SnackbarAlert from "../../components/snackbar/Snackbar";
+import { Link } from "react-router-dom";
 import ListProduct from "./Listproducts";
+import Header from "src/components/header/header";
+import { styled } from '@mui/system';
+
+const PaginationButton = styled(Button)(() => ({
+  position: 'relative',
+  overflow: 'hidden',
+  padding: '3px',
+  minWidth: '40px',
+  borderRadius: '2px',
+  boxShadow: '2px 2px 5px rgba(0,0,0,0.2)',
+  backgroundColor: 'white',
+  color: 'black',
+  '&:hover': {
+    backgroundColor: 'grey.200',
+  },
+  '&::after': {
+    content: '""',
+    position: 'absolute',
+    bottom: 0,
+    left: '-100%',
+    width: '100%',
+    height: '2px',
+    backgroundColor: '#E63673',
+    transition: 'left 0.3s ease-out',
+  },
+  '&:hover::after': {
+    left: 0,
+  },
+}));
 
 function Homepage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -16,18 +44,16 @@ function Homepage() {
   const [success, setSuccess] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [productsPerPage] = useState<number>(10);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const totalPages = Math.ceil(products.length / productsPerPage);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const getAllProducts = async (category: string | null = null) => {
+  const getAllProducts = async (category: string | null = null, query: string = "") => {
     try {
       setLoading(true);
       setError("");
       setSuccess("");
       const { data } = await axios.get("/products", {
-        params: { category },
+        params: { category, query },
       });
       setProducts(data);
     } catch (error) {
@@ -38,28 +64,18 @@ function Homepage() {
     }
   };
 
-  const fetchCategories = async () => {
-    try {
-      const { data } = await axios.get('/categories');
-      setCategories(data);
-    } catch (error) {
-      console.error('Error fetching categories', error);
-    }
+  useEffect(() => {
+    getAllProducts(selectedCategory, searchQuery);
+  }, [selectedCategory, searchQuery]);
+
+  const handleCategorySelect = (category: string | null) => {
+    setSelectedCategory(category);
+    setCurrentPage(1);
   };
 
-  useEffect(() => {
-    if (selectedCategory) { // Thêm điều kiện để kiểm tra nếu selectedCategory không phải null
-      getAllProducts(selectedCategory);
-    } else {
-      getAllProducts(); // Hoặc gọi với giá trị mặc định nếu cần
-    }
-    fetchCategories();
-  }, [selectedCategory]);
-
-
-  const handleCategorySelect = (category: string) => {
-    setSelectedCategory(category);
-    setCurrentPage(1); // Reset to first page
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
   };
 
   const handleCloseSnackbar = () => {
@@ -67,21 +83,91 @@ function Homepage() {
     setSuccess("");
   };
 
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+  const totalPages = Math.max(1, Math.ceil(products.length / productsPerPage));
+  const boundedCurrentPage = Math.min(Math.max(currentPage, 1), totalPages);
+
   const paginate = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
   };
 
-  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const renderPaginationButtons = () => {
+    const buttons = [];
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
+    buttons.push(
+      <PaginationButton
+        key={1}
+        onClick={() => paginate(1)}
+        sx={{
+          color: 1 === boundedCurrentPage ? 'white' : 'black',
+          bgcolor: 1 === boundedCurrentPage ? 'black' : 'white',
+          fontWeight: 1 === boundedCurrentPage ? 'bold' : 'normal',
+          '&:hover': {
+            bgcolor: 1 === boundedCurrentPage ? 'black' : 'grey.200'
+          }
+        }}
+      >
+        1
+      </PaginationButton>
+    );
+
+    if (boundedCurrentPage > 3) {
+      buttons.push(<span key="start-ellipsis"><MoreHorizIcon /></span>);
+    }
+
+    const startPage = Math.max(2, boundedCurrentPage - 1);
+    const endPage = Math.min(totalPages - 1, boundedCurrentPage + 1);
+
+    for (let number = startPage; number <= endPage; number++) {
+      buttons.push(
+        <PaginationButton
+          key={number}
+          onClick={() => paginate(number)}
+          sx={{
+            color: number === boundedCurrentPage ? 'white' : 'black',
+            bgcolor: number === boundedCurrentPage ? 'black' : 'white',
+            fontWeight: number === boundedCurrentPage ? 'bold' : 'normal',
+            '&:hover': {
+              bgcolor: number === boundedCurrentPage ? 'black' : 'grey.200'
+            }
+          }}
+        >
+          {number}
+        </PaginationButton>
+      );
+    }
+
+    if (boundedCurrentPage < totalPages - 2) {
+      buttons.push(<span key="end-ellipsis"><MoreHorizIcon /></span>);
+    }
+
+    buttons.push(
+      <PaginationButton
+        key={totalPages}
+        onClick={() => paginate(totalPages)}
+        sx={{
+          color: totalPages === boundedCurrentPage ? 'white' : 'black',
+          bgcolor: totalPages === boundedCurrentPage ? 'black' : 'white',
+          fontWeight: totalPages === boundedCurrentPage ? 'bold' : 'normal',
+          '&:hover': {
+            bgcolor: totalPages === boundedCurrentPage ? 'black' : 'grey.200'
+          }
+        }}
+      >
+        {totalPages}
+      </PaginationButton>
+    );
+
+    return buttons;
   };
 
   return (
     <>
-      <Header onCategorySelect={handleCategorySelect} />
+      <Header onCategorySelect={handleCategorySelect} onSearch={handleSearch} />
       <Loading isShow={loading} />
       <Grid container spacing={4} justifyContent="center" mt={3}>
         <SnackbarAlert
@@ -104,90 +190,20 @@ function Homepage() {
           justifyContent="center"
           sx={{ px: 4, py: 6 }}
         >
-          {products.map((product, index) => (
+          {currentProducts.map((product, index) => (
             <Link key={index} to={`/product/${product._id}`} style={{ textDecoration: "none" }}>
               <ListProduct product={product} />
             </Link>
           ))}
         </Stack>
-        <Stack direction="row" justifyContent="center" mt={2}>
-          {currentPage > 3 && (
-            <Button
-              onClick={() => paginate(1)}
-              sx={{ mx: 0.5, minWidth: 40, borderRadius: 2, boxShadow: 2, bgcolor: 'white', color: 'black', '&:hover': { bgcolor: 'primary.dark' } }}
-            >
-              1
-            </Button>
-          )}
-          {currentPage > 3 && (
-            <IconButton
-              onClick={handleMenuClick}
-              sx={{ mx: 0.5, borderRadius: 2, boxShadow: 2, bgcolor: 'white', color: 'black', '&:hover': { bgcolor: 'primary.dark' } }}
-            >
-              <MoreHorizIcon />
-            </IconButton>
-          )}
-          {[...Array(totalPages).keys()]
-            .map(n => n + 1)
-            .filter(n => n >= currentPage - 1 && n <= currentPage + 1)
-            .map(number => (
-              <Button
-                key={number}
-                onClick={() => paginate(number)}
-                sx={{
-                  padding: '3px',
-                  color: number === currentPage ? 'white' : 'black',
-                  bgcolor: number === currentPage ? 'black' : 'white',
-                  fontWeight: number === currentPage ? 'bold' : 'normal',
-                  borderRadius: 2,
-                  boxShadow: 2,
-                  mx: 0.5,
-                  minWidth: 40,
-                  '&:hover': {
-                    bgcolor: number === currentPage ? 'black' : 'grey.200'
-                  }
-                }}
-              >
-                {number}
-              </Button>
-            ))}
-          {currentPage < totalPages - 2 && (
-            <IconButton
-              onClick={handleMenuClick}
-              sx={{ mx: 0.5, borderRadius: 2, boxShadow: 2, bgcolor: 'white', color: 'black', '&:hover': { bgcolor: 'primary.dark' } }}
-            >
-              <MoreHorizIcon />
-            </IconButton>
-          )}
-          {currentPage < totalPages - 2 && (
-            <Button
-              onClick={() => paginate(totalPages)}
-              sx={{ mx: 0.5, minWidth: 40, borderRadius: 2, boxShadow: 2, bgcolor: 'white', color: 'black', '&:hover': { bgcolor: 'primary.dark' } }}
-            >
-              {totalPages}
-            </Button>
-          )}
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-          >
-            {[...Array(totalPages).keys()]
-              .map(n => n + 1)
-              .filter(n => n < currentPage - 1 || n > currentPage + 1)
-              .map(number => (
-                <MenuItem
-                  key={number}
-                  onClick={() => {
-                    paginate(number);
-                    handleMenuClose();
-                  }}
-                >
-                  {number}
-                </MenuItem>
-              ))}
-          </Menu>
-        </Stack>
+
+        {totalPages > 1 && (
+          <Grid item xs={12}>
+            <Stack gap={1} direction="row" justifyContent="center" mt={2}>
+              {renderPaginationButtons()}
+            </Stack>
+          </Grid>
+        )}
       </Grid>
     </>
   );
