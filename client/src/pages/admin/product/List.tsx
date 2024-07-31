@@ -103,7 +103,6 @@ const AdminProductList = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [productsPerPage] = useState<number>(6);
   const [error, setError] = useState<string | null>(null);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [filterAnchorEl, setFilterAnchorEl] = useState<null | HTMLElement>(null);
   const [search, setSearch] = useState<string>("");
   const [isSearchVisible, setIsSearchVisible] = useState<boolean>(false);
@@ -163,8 +162,6 @@ const AdminProductList = () => {
 
   const totalPages = Math.max(1, Math.ceil(filteredProducts.length / productsPerPage));
   const boundedCurrentPage = Math.min(Math.max(currentPage, 1), totalPages);
-  const pageNumbers = [...Array(totalPages).keys()].map(n => n + 1);
-
   const indexOfLastProduct = boundedCurrentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
@@ -192,14 +189,6 @@ const AdminProductList = () => {
     }
   };
 
-  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
   const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setFilterAnchorEl(event.currentTarget);
   };
@@ -217,22 +206,75 @@ const AdminProductList = () => {
   };
 
   const renderPaginationButtons = () => {
-    return pageNumbers.map(number => (
+    const buttons = [];
+
+    // Always show the first page
+    buttons.push(
       <PaginationButton
-        key={number}
-        onClick={() => paginate(number)}
+        key={1}
+        onClick={() => paginate(1)}
         sx={{
-          color: number === boundedCurrentPage ? 'white' : 'black',
-          bgcolor: number === boundedCurrentPage ? 'black' : 'white',
-          fontWeight: number === boundedCurrentPage ? 'bold' : 'normal',
+          color: 1 === boundedCurrentPage ? 'white' : 'black',
+          bgcolor: 1 === boundedCurrentPage ? 'black' : 'white',
+          fontWeight: 1 === boundedCurrentPage ? 'bold' : 'normal',
           '&:hover': {
-            bgcolor: number === boundedCurrentPage ? 'black' : 'grey.200'
+            bgcolor: 1 === boundedCurrentPage ? 'black' : 'grey.200'
           }
         }}
       >
-        {number}
+        1
       </PaginationButton>
-    ));
+    );
+
+    if (boundedCurrentPage > 3) {
+      buttons.push(<span key="start-ellipsis"><MoreHorizIcon /></span>);
+    }
+
+    const startPage = Math.max(2, boundedCurrentPage - 1);
+    const endPage = Math.min(totalPages - 1, boundedCurrentPage + 1);
+
+    for (let number = startPage; number <= endPage; number++) {
+      buttons.push(
+        <PaginationButton
+          key={number}
+          onClick={() => paginate(number)}
+          sx={{
+            color: number === boundedCurrentPage ? 'white' : 'black',
+            bgcolor: number === boundedCurrentPage ? 'black' : 'white',
+            fontWeight: number === boundedCurrentPage ? 'bold' : 'normal',
+            '&:hover': {
+              bgcolor: number === boundedCurrentPage ? 'black' : 'grey.200'
+            }
+          }}
+        >
+          {number}
+        </PaginationButton>
+      );
+    }
+
+    if (boundedCurrentPage < totalPages - 2) {
+      buttons.push(<span key="end-ellipsis"><MoreHorizIcon /></span>);
+    }
+
+    // Always show the last page
+    buttons.push(
+      <PaginationButton
+        key={totalPages}
+        onClick={() => paginate(totalPages)}
+        sx={{
+          color: totalPages === boundedCurrentPage ? 'white' : 'black',
+          bgcolor: totalPages === boundedCurrentPage ? 'black' : 'white',
+          fontWeight: totalPages === boundedCurrentPage ? 'bold' : 'normal',
+          '&:hover': {
+            bgcolor: totalPages === boundedCurrentPage ? 'black' : 'grey.200'
+          }
+        }}
+      >
+        {totalPages}
+      </PaginationButton>
+    );
+
+    return buttons;
   };
 
   return (
@@ -346,87 +388,7 @@ const AdminProductList = () => {
           {/* Pagination */}
           {totalPages > 1 && (
             <Stack gap={1} direction="row" justifyContent="center" mt={2}>
-              {boundedCurrentPage > 1 && (
-                <PaginationButton
-                  onClick={() => paginate(1)}
-                  sx={{
-                    mx: 0.5,
-                    minWidth: 40,
-                    // borderRadius: 2,
-                    boxShadow: 2,
-                    bgcolor: 'white',
-                    color: 'black',
-                    '&:hover': { bgcolor: 'primary.dark' }
-                  }}
-                >
-                  Đầu trang
-                </PaginationButton>
-              )}
-
-              {boundedCurrentPage > 2 && (
-                <PaginationButton
-                  onClick={handleMenuClick}
-                  sx={{
-                    mx: 0.5,
-                    // borderRadius: 2,
-                    boxShadow: 2,
-                    bgcolor: 'white',
-                    color: 'black',
-                    '&:hover': { bgcolor: 'primary.dark' }
-                  }}
-                >
-                  <MoreHorizIcon />
-                </PaginationButton>
-              )}
-
               {renderPaginationButtons()}
-
-              {boundedCurrentPage < totalPages && (
-                <>
-                  {boundedCurrentPage < totalPages - 1 && (
-                    <PaginationButton
-                      onClick={handleMenuClick}
-                      sx={{
-                        mx: 0.5,
-                        borderRadius: 0,
-                        boxShadow: 2,
-                        bgcolor: 'white',
-                        color: 'black',
-                        '&:hover': { bgcolor: 'primary.dark' }
-                      }}
-                    >
-                      <MoreHorizIcon />
-                    </PaginationButton>
-                  )}
-                  <PaginationButton
-                    onClick={() => paginate(totalPages)}
-                    sx={{
-                      mx: 0.5,
-                      minWidth: 40,
-                      boxShadow: 2,
-                      bgcolor: 'white',
-                      color: 'black',
-                      '&:hover': { bgcolor: 'primary.dark' }
-                    }}
-                  >
-                    Cuối trang
-                  </PaginationButton>
-                </>
-              )}
-
-              <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-                {pageNumbers.filter(n => n < boundedCurrentPage - 1 || n > boundedCurrentPage + 1).map(number => (
-                  <MenuItem
-                    key={number}
-                    onClick={() => {
-                      paginate(number);
-                      handleMenuClose();
-                    }}
-                  >
-                    {number}
-                  </MenuItem>
-                ))}
-              </Menu>
             </Stack>
           )}
 

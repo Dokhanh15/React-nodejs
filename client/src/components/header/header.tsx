@@ -1,10 +1,14 @@
-import { AppBar, Button, IconButton, InputBase, Link, Stack, styled, Toolbar, Typography, Menu, MenuItem } from "@mui/material";
+import { AppBar, Button, IconButton, InputBase, Link, Stack, styled, Toolbar, Typography, Menu, MenuItem, Badge } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import logo from '../../assets/img/logo.png';
-import { useUser } from "src/pages/client/userContext/userContext";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Category } from "src/types/Product";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+
+import { useMemo } from "react";
+import { useCart } from "src/contexts/Cart";
+import { useUser } from "src/contexts/user";
 
 const GradientButton = styled(Button)(() => ({
   background: 'linear-gradient(45deg, #FE6B8B 50%, white 90%)',
@@ -62,9 +66,11 @@ const Header = ({ onCategorySelect }) => {
   const { user, setUser } = useUser();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [categories, setCategories] = useState<Category[]>([]);
+  const { cart } = useCart();
 
+  // Xử lý đăng xuất
   const handleLogout = () => {
-    localStorage.removeItem('Token');
+    localStorage.removeItem("Token");
     setUser(null);
   };
 
@@ -89,6 +95,15 @@ const Header = ({ onCategorySelect }) => {
     setAnchorEl(null);
   };
 
+  // Tính số lượng sản phẩm trong giỏ hàng
+  const cartQuantity = useMemo(
+    () =>
+      cart
+        ? cart.products.reduce((total, { quantity }) => total + quantity, 0)
+        : 0,
+    [cart]
+  );
+
   return (
     <AppBar
       position="fixed"
@@ -103,7 +118,7 @@ const Header = ({ onCategorySelect }) => {
       >
         <Stack direction="row" spacing={15} sx={{ flexGrow: 1 }}>
           <Link href="/" sx={{ textDecoration: "none" }}>
-            <img src={logo} width={115} alt="" />
+            <img src={logo} width={115} alt="Logo" />
           </Link>
           <Stack direction="row" spacing={2} alignItems="center">
             <Link href="/" color="black" underline="none" sx={{ "&:hover": { borderBottom: "1px solid" } }}>Trang chủ</Link>
@@ -113,8 +128,8 @@ const Header = ({ onCategorySelect }) => {
             {/* <Link href="#" color="black" underline="none" sx={{ "&:hover": { borderBottom: "1px solid" } }}>Courses <span className="dropdown-toggle"></span></Link>
             <Link href="#" color="black" underline="none" sx={{ "&:hover": { borderBottom: "1px solid" } }}>Jobs</Link>
             <Link href="#" color="black" underline="none" sx={{ "&:hover": { borderBottom: "1px solid" } }}>Go Pro</Link> */}
-          </Stack>
-        </Stack>
+          </Stack >
+        </Stack >
 
         <Stack direction="row" spacing={2} alignItems="center">
           <Typography sx={{ position: "relative" }}>
@@ -134,11 +149,20 @@ const Header = ({ onCategorySelect }) => {
           </Typography>
           {user ? (
             <Stack direction="row" spacing={2} alignItems="center">
+              <Link href="/carts">
+                <IconButton color="inherit">
+                  <Badge badgeContent={cartQuantity} color="secondary">
+                    <ShoppingCartIcon />
+                  </Badge>
+                </IconButton>
+              </Link>
               <Typography color="black">Hi, {user.username}</Typography>
               <IconButton>
                 <AccountCircleIcon />
               </IconButton>
-              <GradientButtonLogin onClick={handleLogout}>Đăng xuất</GradientButtonLogin>
+              <GradientButtonLogin onClick={handleLogout}>
+                Đăng xuất
+              </GradientButtonLogin>
             </Stack>
           ) : (
             <Stack direction="row" spacing={2}>
@@ -151,7 +175,7 @@ const Header = ({ onCategorySelect }) => {
             </Stack>
           )}
         </Stack>
-      </Toolbar>
+      </Toolbar >
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -174,7 +198,7 @@ const Header = ({ onCategorySelect }) => {
           </MenuItemStyled>
         ))}
       </Menu>
-    </AppBar>
+    </AppBar >
   );
 };
 

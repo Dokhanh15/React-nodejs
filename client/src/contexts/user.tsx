@@ -34,8 +34,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
           });
           setUser(response.data);
         } else {
-            setUser(null);
-          }
+          setUser(null);
+        }
       } catch (error) {
         console.error('Failed to fetch user:', error);
         setUser(null);

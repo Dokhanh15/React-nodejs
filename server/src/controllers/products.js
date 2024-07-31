@@ -24,6 +24,8 @@ class ProductsController {
       next(error);
     }
   }
+
+
   // GET /products/:id
   async getProductDetail(req, res, next) {
     try {
