@@ -7,6 +7,7 @@ import axios from "axios";
 import { LoadingProvider } from "./contexts/loading.tsx";
 import { CartProvider } from "./contexts/Cart.tsx";
 import { UserProvider } from "./contexts/user.tsx";
+import { FlashProvider } from "./contexts/flash.tsx";
 
 axios.defaults.baseURL = "http://localhost:3000";
 
@@ -15,9 +16,13 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <BrowserRouter>
       <LoadingProvider>
         <UserProvider>
-            <CartProvider>
-              <App />
-            </CartProvider>
+          <CartProvider>
+            <FlashProvider>
+              <CartProvider>
+                <App />
+              </CartProvider>
+            </FlashProvider>
+          </CartProvider>
         </UserProvider>
       </LoadingProvider>
     </BrowserRouter>

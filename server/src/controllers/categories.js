@@ -16,7 +16,6 @@ class CategoriesController {
   async getCategoryDetail(req, res, next) {
     try {
       const category = await Category.findById(req.params._id);
-
       if (!category) throw new ApiError(404, "Category Not Found");
       res.status(StatusCodes.OK).json(category);
     } catch (error) {

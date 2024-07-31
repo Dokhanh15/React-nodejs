@@ -55,7 +55,7 @@ function AdminProductEdit() {
           {isLoading ? (
             <Loading isShow={isLoading} /> // Hiển thị loading khi đang fetch dữ liệu
           ) : product ? (
-            <ProductForm onSubmit={onSubmit} initialValues={product as ProductFormParams} isEdit />
+            <ProductForm onSubmit={onSubmit} initialValues={product as unknown as ProductFormParams} isEdit />
           ) : (
             <Typography variant="body1">Không tìm thấy sản phẩm!</Typography>
           )}

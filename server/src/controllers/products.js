@@ -1,35 +1,36 @@
 import { StatusCodes } from "http-status-codes";
 import Product from "../models/ProductModel";
 import ApiError from "../utils/ApiError";
+import Category from "../models/CategoryModel";
 
 class ProductsController {
-  // GET /products?page=1&limit=10
-async getAllProducts(req, res, next) {
-  try {
-    const { page = 1, limit = 10 } = req.query;
-
-    const products = await Product.find()
-      .populate("category")
-      .limit(limit * 1)
-      .skip((page - 1) * limit)
-      .exec();
-
-    const count = await Product.countDocuments();
-
-    res.status(StatusCodes.OK).json({
-      products,
-      totalPages: Math.ceil(count / limit),
-      currentPage: Number(page),
-    });
-  } catch (error) {
-    next(error);
+  // GET /products
+  async getAllProducts(req, res, next) {
+    try {
+      const { category } = req.query; // Lấy tham số category từ query string
+      let filter = {};
+      if (category) {
+        // Tìm ObjectId của category dựa trên tên của nó
+        const categoryDoc = await Category.findOne({ name: category });
+        if (categoryDoc) {
+          filter.category = categoryDoc._id;
+        } else {
+          return res.status(StatusCodes.OK).json([]);
+        }
+      }
+      const products = await Product.find(filter).populate("category");
+      res.status(StatusCodes.OK).json(products);
+    } catch (error) {
+      next(error);
+    }
   }
-}
 
   // GET /products/:id
   async getProductDetail(req, res, next) {
     try {
-      const product = await Product.findById(req.params.id).populate("category");
+      const product = await Product.findById(req.params.id).populate(
+        "category"
+      );
 
       if (!product) throw new ApiError(404, "Product Not Found");
       res.status(StatusCodes.OK).json(product);

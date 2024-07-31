@@ -16,11 +16,18 @@ export const useProductCart = () => {
     const userStorage = localStorage.getItem("user") || "{}";
     const user = JSON.parse(userStorage);
     setUser(user);
+
     if (!user._id) return;
-    const { data } = await axios.get(`/carts/user/${user._id}`);
-    console.log("Cart data from API:", data); 
-    setCart(data);
+
+    try {
+      const { data } = await axios.get(`/carts/user/${user._id}`);
+      console.log("Cart data from API:", data);  // Log để kiểm tra dữ liệu từ API
+      setCart(data);
+    } catch (error) {
+      console.error("Failed to fetch cart data", error);
+    }
   };
+  
 
   const addToCart = async ({ product, quantity }: AddToCart) => {
     if (quantity <= 0 || !user) return;
@@ -55,12 +62,13 @@ export const useProductCart = () => {
     if (window.confirm("Remove Item Cart")) {
       try {
         await axios.delete(`/carts/user/${user._id}/product/${productId}`);
-        getCartUser();
+        await getCartUser();  // Cập nhật giỏ hàng sau khi xóa sản phẩm
       } catch (error) {
-        console.log(error);
+        console.error("Error removing item from cart:", error);
       }
     }
   };
+  
 
   return { addToCart, removeToCart, getCartUser };
 };

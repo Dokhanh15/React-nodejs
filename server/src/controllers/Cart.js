@@ -42,32 +42,31 @@ class CartsController {
           model: Product,
         },
       });
+      console.log("Cart data for user:", cart);
       res.status(StatusCodes.OK).json(cart);
     } catch (error) {
       next(error);
     }
   }
+  
 
   // POST /carts
   async createCart(req, res, next) {
     try {
       const { quantity, user, product } = req.body;
       const cart = await Cart.findOne({ user });
-
+  
       if (cart) {
-        // Thay đổi giỏ hàng thay vì tạo mới
         const productExisted = cart.products.find(
           (item) => item.product == product
         );
-
+  
         if (productExisted) {
-          // Cập nhật số lượng sản phẩm nếu sản phẩm đã tồn tại trong giỏ hàng
           productExisted.quantity += quantity;
         } else {
-          // Thêm sản phẩm mới vào giỏ hàng nếu sản phẩm chưa tồn tại
           cart.products.push({ product, quantity });
         }
-
+  
         await cart.save();
         res.status(StatusCodes.OK).json({
           message: "Cart updated successfully",
@@ -92,6 +91,7 @@ class CartsController {
       next(error);
     }
   }
+  
 
   // PUT /carts/:id
   async updateCart(req, res, next) {

@@ -14,20 +14,21 @@ import { useProductCart } from "src/Hooks/CartProducts";
 
 const labels = ["Product", "Price", "Quantity", "Subtotal", ""];
 
-function Cart() {
+const Cart = () => {
   const { cart, updateCart } = useCart();
   const { getCartUser, removeToCart } = useProductCart();
 
   useEffect(() => {
     getCartUser();
-  }, []);
+  }, [getCartUser]);  // Thêm `getCartUser` vào dependency array để tránh cảnh báo React
 
-  const calculateSubtotal = (price:number, quantity:number) => {
+  const calculateSubtotal = (price: number, quantity: number) => {
     return price * quantity;
   };
 
-  const handleRemoveFromCart = async (productId:string) => {
+  const handleRemoveFromCart = async (productId: string) => {
     await removeToCart(productId);
+    // Cập nhật giỏ hàng ngay lập tức sau khi xóa sản phẩm
     updateCart();
   };
 
@@ -85,7 +86,7 @@ function Cart() {
       </Stack>
     </Container>
   );
-}
+};
 
 export default Cart;
 

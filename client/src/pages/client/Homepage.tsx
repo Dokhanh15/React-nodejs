@@ -1,11 +1,12 @@
-import { Grid, Stack, Button, IconButton, Menu, MenuItem } from "@mui/material";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { Button, Grid, IconButton, Menu, MenuItem, Stack } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import Loading from "src/components/loading/loading";
-import { Product } from "src/types/Product";
-import SnackbarAlert from "../../components/snackbar/Snackbar";
 import { Link } from "react-router-dom";
+import Header from "src/components/header/header";
+import Loading from "src/components/loading/loading";
+import { Category, Product } from "src/types/Product";
+import SnackbarAlert from "../../components/snackbar/Snackbar";
 import ListProduct from "./Listproducts";
 
 function Homepage() {
@@ -14,19 +15,21 @@ function Homepage() {
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(1);
   const [productsPerPage] = useState<number>(10);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const totalPages = Math.ceil(products.length / productsPerPage);
 
-  const getAllProducts = async (page = 1) => {
+  const getAllProducts = async (category: string | null = null) => {
     try {
       setLoading(true);
       setError("");
       setSuccess("");
-      const { data } = await axios.get(`/products?page=${page}&limit=${productsPerPage}`);
-      setProducts(data.products);
-      setTotalPages(data.totalPages);
-      setCurrentPage(data.currentPage);
+      const { data } = await axios.get("/products", {
+        params: { category },
+      });
+      setProducts(data);
     } catch (error) {
       setError("Có lỗi xảy ra, vui lòng thử lại sau!");
       console.error(error);
@@ -35,9 +38,29 @@ function Homepage() {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const { data } = await axios.get('/categories');
+      setCategories(data);
+    } catch (error) {
+      console.error('Error fetching categories', error);
+    }
+  };
+
   useEffect(() => {
-    getAllProducts(currentPage);
-  }, [currentPage]);
+    if (selectedCategory) { // Thêm điều kiện để kiểm tra nếu selectedCategory không phải null
+      getAllProducts(selectedCategory);
+    } else {
+      getAllProducts(); // Hoặc gọi với giá trị mặc định nếu cần
+    }
+    fetchCategories();
+  }, [selectedCategory]);
+
+
+  const handleCategorySelect = (category: string) => {
+    setSelectedCategory(category);
+    setCurrentPage(1); // Reset to first page
+  };
 
   const handleCloseSnackbar = () => {
     setError("");
@@ -46,7 +69,6 @@ function Homepage() {
 
   const paginate = (pageNumber: number) => {
     setCurrentPage(pageNumber);
-    getAllProducts(pageNumber);
   };
 
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -59,6 +81,7 @@ function Homepage() {
 
   return (
     <>
+      <Header onCategorySelect={handleCategorySelect} />
       <Loading isShow={loading} />
       <Grid container spacing={4} justifyContent="center" mt={3}>
         <SnackbarAlert
