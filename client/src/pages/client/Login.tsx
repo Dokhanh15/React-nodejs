@@ -11,7 +11,6 @@ import { useUser } from "src/contexts/user";
 
 const Login = () => {
   const { register, handleSubmit, reset, formState: { errors } } = useForm<Users>();
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -25,7 +24,6 @@ const Login = () => {
       setSuccess("");
       const response = await axiosInstance.post("/auth/login", data);
       setSuccess("Đăng nhập thành công!");
-      console.log("Đăng nhập thành công:", response.data);
 
       // Lưu token vào localStorage
       localStorage.setItem("Token", response.data.token);

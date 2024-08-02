@@ -15,6 +15,7 @@ import Homepage from "./pages/client/Homepage";
 import Login from "./pages/client/Login";
 import Register from "./pages/client/Register";
 import Checkout from "./pages/client/Checkout";
+import ProductLiked from "./pages/client/ProductLiked";
 
 const routeConfig = [
   {
@@ -24,6 +25,10 @@ const routeConfig = [
       {
         path: "/",
         element: <Homepage />,
+      },
+      {
+        path: "product/liked",
+        element: <ProductLiked />,
       },
       {
         path: "product/:id",
@@ -48,7 +53,7 @@ const routeConfig = [
       {
         path: "test",
         element: <DynamicInputForm />,
-      },
+      }
     ],
   },
 
@@ -101,7 +106,7 @@ function App() {
 
   return (
     <main>{routes}</main>
-    
+
   );
 }
 

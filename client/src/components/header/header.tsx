@@ -71,6 +71,7 @@ const Header = ({ onCategorySelect, onSearch }) => {
   const handleLogout = () => {
     localStorage.removeItem("Token");
     setUser(null);
+    window.location.reload();
   };
 
   const fetchCategories = async () => {
@@ -95,11 +96,9 @@ const Header = ({ onCategorySelect, onSearch }) => {
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
-    // Nếu chuỗi tìm kiếm rỗng, gọi onSearch với chuỗi rỗng
-    if (event.target.value === '') {
-      onSearch('');
-    }
+    const newSearchQuery = event.target.value;
+    setSearchQuery(newSearchQuery);
+    onSearch(newSearchQuery);
   };
 
   const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -136,6 +135,7 @@ const Header = ({ onCategorySelect, onSearch }) => {
             <Link href="#" color="black" underline="none" onMouseEnter={handleCategoryClick} sx={{ "&:hover": { borderBottom: "1px solid" } }}>
               Danh mục
             </Link>
+            <Link href="/product/liked" color="black" underline="none" sx={{ "&:hover": { borderBottom: "1px solid" } }}>Yêu thích</Link>
           </Stack >
         </Stack >
 
@@ -152,7 +152,7 @@ const Header = ({ onCategorySelect, onSearch }) => {
                 borderRadius: 10,
                 border: "1px solid #ccc",
                 bgcolor: "#fff",
-                "&:focus": { borderColor: "#aaa" },
+                ":focus-within": { borderColor: "pink", borderWidth: 2 }
               }}
               inputProps={{ "aria-label": "search" }}
             />

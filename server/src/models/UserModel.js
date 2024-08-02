@@ -21,7 +21,15 @@ const UserSchema = new Schema(
       default: "member",
     },
     confirmPassword: {
-      type: String,  
+      type: String,
+    },
+    likedProducts: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Product'
+    }],
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
     },
   },
   {
@@ -30,6 +38,6 @@ const UserSchema = new Schema(
   }
 );
 
-const User = mongoose.model("users", UserSchema);
+const User = mongoose.model("User", UserSchema);
 
 export default User;

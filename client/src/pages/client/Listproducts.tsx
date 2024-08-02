@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Card,
   CardActions,
@@ -8,9 +9,12 @@ import {
   styled,
   Typography,
 } from "@mui/material";
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Product } from "src/types/Product";
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import axiosInstance from "./axiosInstance/axiosInstance";
 
 type ProductCardProps = {
   product: Product;
@@ -18,6 +22,25 @@ type ProductCardProps = {
 
 const ListProduct: FC<ProductCardProps> = ({ product }) => {
   const [hovered, setHovered] = useState(false);
+  const [liked, setLiked] = useState(false);
+
+  useEffect(() => {
+    // Gửi yêu cầu để lấy trạng thái yêu thích của sản phẩm khi component mount
+    const checkLikedStatus = async () => {
+      const token = localStorage.getItem("Token");
+      if (token) {
+        try {
+          const response = await axiosInstance.get('/users/liked-products');
+          const likedProducts = response.data.map((item: Product) => item._id);
+          setLiked(likedProducts.includes(product._id));
+        } catch (error) {
+          console.error('Lỗi khi lấy sản phẩm đã thích:', error);
+        }
+      }
+    };
+
+    checkLikedStatus();
+  }, [product._id]);
 
   const handleMouseEnter = () => {
     setHovered(true);
@@ -25,6 +48,21 @@ const ListProduct: FC<ProductCardProps> = ({ product }) => {
 
   const handleMouseLeave = () => {
     setHovered(false);
+  };
+
+  const handleLikeClick = async () => {
+    try {
+      if (liked) {
+        // Bỏ thích sản phẩm
+        await axiosInstance.post(`/users/unlike/${product._id}`);
+      } else {
+        // Thích sản phẩm
+        await axiosInstance.post(`/users/like/${product._id}`);
+      }
+      setLiked(!liked);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const GradientButton = styled(Button)(() => ({
@@ -70,7 +108,7 @@ const ListProduct: FC<ProductCardProps> = ({ product }) => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <Link to={`/product/${product._id}`}>
+        <Link to={``} style={{ cursor: "default" }}>
           <CardMedia
             component="div"
             sx={{
@@ -81,6 +119,22 @@ const ListProduct: FC<ProductCardProps> = ({ product }) => {
               backgroundPosition: "center",
             }}
           >
+            <Box
+              sx={{
+                padding: 1,
+                position: "absolute",
+                top: 8,
+                right: 8,
+                cursor: 'pointer',
+                color: liked ? 'red' : 'black',
+                '&:hover': {
+                  opacity: 0.7,
+                },
+              }}
+              onClick={handleLikeClick}
+            >
+              {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+            </Box>
             <CardContent
               sx={{
                 position: "absolute",
@@ -108,8 +162,8 @@ const ListProduct: FC<ProductCardProps> = ({ product }) => {
           </CardMedia>
         </Link>
         <CardActions>
-          <GradientButtonBuy>Mua</GradientButtonBuy>
-          <GradientButton>Thêm giỏ hàng</GradientButton>
+          <Link to={`product/${product._id}`}><GradientButtonBuy>Chi tiết</GradientButtonBuy></Link>
+          <Link to={"#"}><GradientButton>Thêm giỏ hàng</GradientButton></Link>
         </CardActions>
       </Card>
     </Stack>

@@ -15,7 +15,7 @@ const ClientLayout = () => {
   return (
     <Stack>
       <CartProvider>
-        <Header onCategorySelect={undefined} />
+        <Header onCategorySelect={undefined} onSearch={undefined} />
         <Stack mt={14.5}>
           <Outlet />
         </Stack>

@@ -1,11 +1,10 @@
-import { Grid, Stack, Button } from "@mui/material";
+import { Grid, Stack, Button, Typography } from "@mui/material";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Loading from "src/components/loading/loading";
 import { Product } from "src/types/Product";
 import SnackbarAlert from "../../components/snackbar/Snackbar";
-import { Link } from "react-router-dom";
 import ListProduct from "./Listproducts";
 import Header from "src/components/header/header";
 import { styled } from '@mui/system';
@@ -46,6 +45,7 @@ function Homepage() {
   const [productsPerPage] = useState<number>(10);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [noResults, setNoResults] = useState<boolean>(false);
 
   const getAllProducts = async (category: string | null = null, query: string = "") => {
     try {
@@ -56,6 +56,7 @@ function Homepage() {
         params: { category, query },
       });
       setProducts(data);
+      setNoResults(data.length === 0); // Set noResults to true if no products are found
     } catch (error) {
       setError("Có lỗi xảy ra, vui lòng thử lại sau!");
       console.error(error);
@@ -190,11 +191,13 @@ function Homepage() {
           justifyContent="center"
           sx={{ px: 4, py: 6 }}
         >
-          {currentProducts.map((product, index) => (
-            <Link key={index} to={`/product/${product._id}`} style={{ textDecoration: "none" }}>
-              <ListProduct product={product} />
-            </Link>
-          ))}
+          {noResults ? (
+            <Typography variant="h3">Không tìm thấy sản phẩm</Typography>
+          ) : (
+            currentProducts.map((product) => (
+              <ListProduct key={product._id} product={product} />
+            ))
+          )}
         </Stack>
 
         {totalPages > 1 && (
