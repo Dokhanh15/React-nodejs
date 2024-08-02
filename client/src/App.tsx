@@ -15,6 +15,7 @@ import Homepage from "./pages/client/Homepage";
 import Login from "./pages/client/Login";
 import Register from "./pages/client/Register";
 import Checkout from "./pages/client/Checkout";
+import OrdersList from "./pages/client/OrderList";
 
 const routeConfig = [
   {
@@ -45,6 +46,11 @@ const routeConfig = [
         path: "checkout",
         element: <Checkout />,
       },
+      {
+        path: "/orders/list",
+        element: <OrdersList />,
+      },
+      
       {
         path: "test",
         element: <DynamicInputForm />,

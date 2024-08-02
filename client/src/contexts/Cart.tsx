@@ -1,11 +1,12 @@
-import React, { createContext, useState, useContext, ReactNode, useEffect } from "react";
 import axios from "axios";
+import React, { createContext, ReactNode, useContext, useState } from "react";
 import { Cart } from "src/types/Product";
 
 interface CartContextType {
   cart: Cart | null;
   setCart: React.Dispatch<React.SetStateAction<Cart | null>>;
   updateCart: () => Promise<void>;
+  updateCartQuantity: (productId: string, action: 'increase' | 'decrease') => Promise<void>;
   removeToCart: (productId: string) => void;
 }
 
@@ -36,17 +37,28 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       if (user._id) {
         const { data } = await axios.get(`/carts/user/${user._id}`);
         setCart(data);
-        localStorage.setItem("cart", JSON.stringify(data));  // Save to localStorage
-        console.log("Cart data from API:", data);  // Log để kiểm tra dữ liệu từ API
+        localStorage.setItem("cart", JSON.stringify(data));  
       }
     } catch (error) {
       console.error("Failed to fetch cart:", error);
     }
   };
 
-  useEffect(() => {
-    updateCart();
-  }, []);
+  const updateCartQuantity = async (productId: string, action: 'increase' | 'decrease') => {
+    const userStorage = localStorage.getItem("user") || "{}";
+    const user = JSON.parse(userStorage);
+  
+    if (!user._id) return;
+  
+    try {
+      const { data } = await axios.put(`/carts/user/${user._id}/product/${productId}`, { action });
+      setCart(data);
+      localStorage.setItem("cart", JSON.stringify(data));
+    } catch (error) {
+      console.error("Failed to update cart quantity:", error);
+    }
+  };
+  
 
   const removeToCart = async (productId: string) => {
     const userStorage = localStorage.getItem("user") || "{}";
@@ -56,7 +68,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     if (window.confirm("Remove Item Cart")) {
       try {
         await axios.delete(`/carts/user/${user._id}/product/${productId}`);
-        updateCart();  // Update cart after removing item
+        updateCart();  
       } catch (error) {
         console.log(error);
       }
@@ -64,7 +76,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cart, setCart, updateCart, removeToCart }}>
+    <CartContext.Provider value={{ cart, setCart, updateCart, updateCartQuantity, removeToCart }}>
       {children}
     </CartContext.Provider>
   );

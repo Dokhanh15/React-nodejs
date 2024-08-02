@@ -9,7 +9,10 @@ import {
   Typography,
 } from "@mui/material";
 import { FC, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import SnackbarAlert from "src/components/snackbar/Snackbar";
+import { useUser } from "src/contexts/user";
+import { useProductCart } from "src/Hooks/CartProducts";
 import { Product } from "src/types/Product";
 
 type ProductCardProps = {
@@ -18,6 +21,15 @@ type ProductCardProps = {
 
 const ListProduct: FC<ProductCardProps> = ({ product }) => {
   const [hovered, setHovered] = useState(false);
+  const { addToCart } = useProductCart();
+  const { user } = useUser();
+  const navigate = useNavigate();
+  const [quantity] = useState<number>(1);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error",
+  });
 
   const handleMouseEnter = () => {
     setHovered(true);
@@ -52,6 +64,26 @@ const ListProduct: FC<ProductCardProps> = ({ product }) => {
     },
   }));
 
+  const handleAddToCart = (event: React.MouseEvent<HTMLButtonElement>, product: Product) => {
+    event.stopPropagation(); // Prevents event bubbling to parent elements
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    if (quantity <= 0) return;
+    addToCart({ product, quantity });
+    setSnackbar({
+      open: true,
+      message: "Thêm vào giỏ hàng thành công!",
+      severity: "success",
+    });
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   return (
     <Stack>
       <Card
@@ -70,7 +102,6 @@ const ListProduct: FC<ProductCardProps> = ({ product }) => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <Link to={`/product/${product._id}`}>
           <CardMedia
             component="div"
             sx={{
@@ -106,12 +137,19 @@ const ListProduct: FC<ProductCardProps> = ({ product }) => {
               </Typography>
             </CardContent>
           </CardMedia>
-        </Link>
         <CardActions>
-          <GradientButtonBuy>Mua</GradientButtonBuy>
-          <GradientButton>Thêm giỏ hàng</GradientButton>
+        <Link to={`/product/${product._id}`}><GradientButtonBuy>Chi tiết</GradientButtonBuy></Link>
+          <GradientButton onClick={(event) => handleAddToCart(event, product)}>
+            Thêm giỏ hàng
+          </GradientButton>
         </CardActions>
       </Card>
+      <SnackbarAlert
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={handleCloseSnackbar}
+      />
     </Stack>
   );
 };

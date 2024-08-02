@@ -137,9 +137,9 @@ class CartsController {
       const { userId, id } = req.params;
       const cart = await Cart.findOne({ user: userId });
       if (!cart) throw new ApiError(404, "Cart Not Found");
-
+  
       const newProductCart = cart.products.filter((item) => item.product != id);
-
+  
       const updateCart = await Cart.findByIdAndUpdate(
         cart._id,
         { products: newProductCart },
@@ -153,22 +153,67 @@ class CartsController {
         data: updateCart,
       });
     } catch (error) {
+      console.error("Error occurred while removing item from cart:", error);
       next(error);
     }
   }
+  
 
   // DELETE /carts/:id
   async deleteCart(req, res, next) {
     try {
-      const cart = await Cart.findByIdAndDelete(req.params.id);
-      if (!cart) throw new ApiError(404, "Cart Not Found");
+      const cartId = req.params.id;
+      console.log(`Đang cố gắng xóa giỏ hàng với ID: ${cartId}`);
+  
+      const cart = await Cart.findByIdAndDelete(cartId);
+      if (!cart) {
+        console.error(`Không tìm thấy giỏ hàng với ID ${cartId}`);
+        throw new ApiError(404, "Cart Not Found");
+      }
       res.status(StatusCodes.OK).json({
-        message: "Delete Cart Done",
+        message: "Xóa giỏ hàng thành công",
       });
+    } catch (error) {
+      console.error("Lỗi xảy ra khi xóa giỏ hàng:", error);
+      next(error);
+    }
+  }
+  
+  
+
+  // PUT /carts/:userId/product/:productId
+  async updateCartQuantity(req, res, next) {
+    try {
+      const { userId, productId } = req.params;
+      const { action } = req.body;
+      console.log(`Updating quantity for user: ${userId}, product: ${productId}, action: ${action}`);
+      const cart = await Cart.findOne({ user: userId });
+      if (!cart) {
+        console.error("Cart not found for user:", userId);
+        throw new ApiError(404, "Cart Not Found");
+      }
+
+      const productInCart = cart.products.find(item => item.product.toString() === productId);
+      if (!productInCart) {
+        console.error("Product not found in cart:", productId);
+        throw new ApiError(404, "Product Not Found in Cart");
+      }
+
+      if (action === 'increase') {
+        productInCart.quantity += 1;
+      } else if (action === 'decrease') {
+        productInCart.quantity = Math.max(productInCart.quantity - 1, 1);
+      }
+
+      await cart.save();
+      res.status(StatusCodes.OK).json(cart);
     } catch (error) {
       next(error);
     }
   }
+
+
+  
 }
 
 export default CartsController;

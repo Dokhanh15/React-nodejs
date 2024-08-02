@@ -26,10 +26,10 @@ const Login = () => {
       const response = await axiosInstance.post("/auth/login", data);
       setSuccess("Đăng nhập thành công!");
       console.log("Đăng nhập thành công:", response.data);
-
-      // Lưu token vào localStorage
+      
       localStorage.setItem("Token", response.data.token);
-
+      setUser(response.data.user);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
       setUser(response.data.user); // Cập nhật trạng thái người dùng
 
       reset();

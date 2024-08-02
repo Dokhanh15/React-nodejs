@@ -17,6 +17,7 @@ import { useProductCart } from "src/Hooks/CartProducts";
 import { Product } from "src/types/Product";
 import { useLoading } from "src/contexts/loading";
 import { useUser } from "src/contexts/user";
+import SnackbarAlert from "src/components/snackbar/Snackbar";
 
 const GradientButton = styled(Button)(() => ({
   background: "linear-gradient(45deg, #FE6B8B 50%, white 90%)",
@@ -41,7 +42,12 @@ function Detail() {
   const navigate = useNavigate();
   const { loading, setLoading } = useLoading();
   const [product, setProduct] = useState<Product | null>(null);
-  const [quantity, setQuantity] = useState<number>(0);
+  const [quantity, setQuantity] = useState<number>(1);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error",
+  });
 
   useEffect(() => {
     if (!id) return;
@@ -75,9 +81,26 @@ function Detail() {
     }
 
     if (quantity <= 0) return;
-    addToCart({ product, quantity });
-    console.log(product);
 
+    try {
+      addToCart({ product, quantity });
+      setSnackbar({
+        open: true,
+        message: "Thêm vào giỏ hàng thành công!",
+        severity: "success",
+      });
+    } catch (error) {
+      console.error("Failed to add to cart", error);
+      setSnackbar({
+        open: true,
+        message: "Không thêm được sản phẩm vào giỏ hàng!",
+        severity: "error",
+      });
+    }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
@@ -141,6 +164,12 @@ function Detail() {
           )}
         </Container>
       </Stack>
+      <SnackbarAlert
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        onClose={handleCloseSnackbar}
+      />
     </>
   );
 }

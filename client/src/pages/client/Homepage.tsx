@@ -1,14 +1,13 @@
-import { Grid, Stack, Button } from "@mui/material";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { Button, Grid, Stack, Typography } from "@mui/material";
+import { styled } from '@mui/system';
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Header from "src/components/header/header";
 import Loading from "src/components/loading/loading";
 import { Product } from "src/types/Product";
 import SnackbarAlert from "../../components/snackbar/Snackbar";
-import { Link } from "react-router-dom";
 import ListProduct from "./Listproducts";
-import Header from "src/components/header/header";
-import { styled } from '@mui/system';
 
 const PaginationButton = styled(Button)(() => ({
   position: 'relative',
@@ -185,15 +184,15 @@ function Homepage() {
         <Stack
           direction="row"
           flexWrap="wrap"
-          gap={4}
+          gap={3}
           alignItems="center"
           justifyContent="center"
           sx={{ px: 4, py: 6 }}
         >
           {currentProducts.map((product, index) => (
-            <Link key={index} to={`/product/${product._id}`} style={{ textDecoration: "none" }}>
+            <Typography key={index}  style={{ textDecoration: "none" }}>
               <ListProduct product={product} />
-            </Link>
+            </Typography>
           ))}
         </Stack>
 

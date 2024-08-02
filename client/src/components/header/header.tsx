@@ -1,14 +1,30 @@
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { Link as RouterLink } from "react-router-dom";
-import logo from "../../assets/img/logo.png";
-import { useMemo, useState, useEffect } from "react";
-import axios from "axios";
-import { Category } from "src/types/Product";
-import { AppBar, Button, IconButton, InputBase, Link, Stack, styled, Toolbar, Typography, Menu, MenuItem, Badge } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import {
+  AppBar,
+  Badge,
+  Button,
+  IconButton,
+  InputBase,
+  Menu,
+  MenuItem,
+  Stack,
+  styled,
+  Toolbar,
+  Typography
+} from "@mui/material";
+import axios from "axios";
+import { useEffect, useMemo, useState } from "react";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useCart } from "src/contexts/Cart";
 import { useUser } from "src/contexts/user";
+import { Category } from "src/types/Product";
+import logo from "../../assets/img/logo.png";
 
+interface HeaderProps {
+  onCategorySelect: (category: string | null) => void;
+  onSearch: (query: string) => void;
+}
 const GradientButton = styled(Button)(() => ({
   background: "linear-gradient(45deg, #FE6B8B 50%, white 90%)",
   backgroundSize: "200% 200%",
@@ -61,16 +77,18 @@ const MenuItemStyled = styled(MenuItem)(() => ({
   },
 }));
 
-const Header = ({ onCategorySelect, onSearch }) => {
+const Header: React.FC<HeaderProps> = ({ onCategorySelect, onSearch }) => {
   const { user, setUser } = useUser();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const { cart } = useCart();
+  const navigate =useNavigate()
 
   const handleLogout = () => {
     localStorage.removeItem("Token");
     setUser(null);
+    navigate("/login")
   };
 
   const fetchCategories = async () => {
@@ -97,8 +115,8 @@ const Header = ({ onCategorySelect, onSearch }) => {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
     // Nếu chuỗi tìm kiếm rỗng, gọi onSearch với chuỗi rỗng
-    if (event.target.value === '') {
-      onSearch('');
+    if (event.target.value === "") {
+      onSearch("");
     }
   };
 
@@ -140,11 +158,14 @@ const Header = ({ onCategorySelect, onSearch }) => {
             </RouterLink>
             <Typography
               onMouseEnter={handleCategoryClick}
-              sx={{color:"black", cursor: "pointer", "&:hover": { borderBottom: "1px solid" } }}
+              sx={{
+                color: "black",
+                cursor: "pointer",
+                "&:hover": { borderBottom: "1px solid" },
+              }}
             >
               Danh mục
             </Typography>
-           
           </Stack>
         </Stack>
 
@@ -194,7 +215,7 @@ const Header = ({ onCategorySelect, onSearch }) => {
             </Stack>
           )}
         </Stack>
-      </Toolbar >
+      </Toolbar>
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -223,7 +244,7 @@ const Header = ({ onCategorySelect, onSearch }) => {
           </MenuItemStyled>
         ))}
       </Menu>
-    </AppBar >
+    </AppBar>
   );
 };
 
