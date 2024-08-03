@@ -68,13 +68,29 @@ const ListProduct: FC<ProductCardProps> = ({ product }) => {
       if (liked) {
         // Bỏ thích sản phẩm
         await axiosInstance.post(`/users/unlike/${product._id}`);
+        setSnackbar({
+          open: true,
+          message: "Đã bỏ thích sản phẩm",
+          severity: "success",
+        });
+        window.location.reload();
       } else {
         // Thích sản phẩm
         await axiosInstance.post(`/users/like/${product._id}`);
+        setSnackbar({
+          open: true,
+          message: "Đã thích sản phẩm",
+          severity: "success",
+        });
       }
       setLiked(!liked);
     } catch (err) {
       console.error(err);
+      setSnackbar({
+        open: true,
+        message: "Có lỗi xảy ra",
+        severity: "error",
+      });
     }
   };
 

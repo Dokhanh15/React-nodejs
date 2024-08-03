@@ -9,10 +9,10 @@ function Flash({ isShow }: FlashProps) {
     <Snackbar
       anchorOrigin={{ vertical: "top", horizontal: "right" }}
       open={isShow}
-      onClose={() => {}}
+      onClose={() => { }}
       autoHideDuration={2000}
     >
-      <Alert severity="success">Thành công!</Alert>
+      <Alert severity="success">Xóa thành công!</Alert>
     </Snackbar>
   );
 }

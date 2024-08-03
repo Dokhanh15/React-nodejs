@@ -13,8 +13,6 @@ const ClientLayout = () => {
     getCartUser();
   }, [getCartUser]);
 
-  
-
   return (
     <Stack>
       <CartProvider>
@@ -22,7 +20,6 @@ const ClientLayout = () => {
           onCategorySelect={undefined}
           onSearch={undefined}
         />
-
         <Stack mt={14.5}>
           <Outlet />
         </Stack>

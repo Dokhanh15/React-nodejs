@@ -42,31 +42,30 @@ class CartsController {
           model: Product,
         },
       });
-      console.log("Cart data for user:", cart);
       res.status(StatusCodes.OK).json(cart);
     } catch (error) {
       next(error);
     }
   }
-  
+
 
   // POST /carts
   async createCart(req, res, next) {
     try {
       const { quantity, user, product } = req.body;
       const cart = await Cart.findOne({ user });
-  
+
       if (cart) {
         const productExisted = cart.products.find(
           (item) => item.product == product
         );
-  
+
         if (productExisted) {
           productExisted.quantity += quantity;
         } else {
           cart.products.push({ product, quantity });
         }
-  
+
         await cart.save();
         res.status(StatusCodes.OK).json({
           message: "Cart updated successfully",
@@ -91,7 +90,7 @@ class CartsController {
       next(error);
     }
   }
-  
+
 
   // PUT /carts/:id
   async updateCart(req, res, next) {
@@ -137,9 +136,9 @@ class CartsController {
       const { userId, id } = req.params;
       const cart = await Cart.findOne({ user: userId });
       if (!cart) throw new ApiError(404, "Cart Not Found");
-  
+
       const newProductCart = cart.products.filter((item) => item.product != id);
-  
+
       const updateCart = await Cart.findByIdAndUpdate(
         cart._id,
         { products: newProductCart },
@@ -157,14 +156,14 @@ class CartsController {
       next(error);
     }
   }
-  
+
 
   // DELETE /carts/:id
   async deleteCart(req, res, next) {
     try {
       const cartId = req.params.id;
       console.log(`Đang cố gắng xóa giỏ hàng với ID: ${cartId}`);
-  
+
       const cart = await Cart.findByIdAndDelete(cartId);
       if (!cart) {
         console.error(`Không tìm thấy giỏ hàng với ID ${cartId}`);
@@ -178,8 +177,8 @@ class CartsController {
       next(error);
     }
   }
-  
-  
+
+
 
   // PUT /carts/:userId/product/:productId
   async updateCartQuantity(req, res, next) {
@@ -213,7 +212,7 @@ class CartsController {
   }
 
 
-  
+
 }
 
 export default CartsController;

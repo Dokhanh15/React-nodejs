@@ -121,7 +121,7 @@ const AdminProductList = () => {
       }
       setProducts(filteredData);
     } catch (error) {
-      // setFlash("Có lỗi xảy ra, vui lòng thử lại sau!", "error");
+      setError('Có lỗi xảy ra, vui lòng thử lại sau!');
     }
     setLoading(false);
   };

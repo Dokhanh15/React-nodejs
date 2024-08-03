@@ -23,6 +23,23 @@ import { useProductCart } from "src/Hooks/CartProducts";
 // Define labels for cart table
 const labels = ["Sản phẩm", "Giá", "Số lượng", "Tổng tiền"];
 
+const GradientButton = styled(Button)(() => ({
+  background: "linear-gradient(45deg, #FE6B8B 50%, white 90%)",
+  backgroundSize: "200% 200%",
+  border: 0,
+  borderRadius: 3,
+  boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
+  color: "white",
+  height: 48,
+  marginTop: "20px",
+  padding: "0 30px",
+  transition: "background-position 1s ease",
+  backgroundPosition: "0% 100%",
+  "&:hover": {
+    backgroundPosition: "200% 100%",
+  },
+}));
+
 const Cart = () => {
   const { cart, updateCartQuantity } = useCart();
   const { getCartUser, removeToCart } = useProductCart();
@@ -101,22 +118,10 @@ const Cart = () => {
       <Wrapper>
         <Stack direction="row" spacing={2} mb={3}>
           <Link to="/orders/list">
-            <Button
-              variant="contained"
-              sx={{
-                background: "linear-gradient(90deg, #6f42c1 0%, #d63384 100%)", // Gradient từ tím sang hồng
-                color: "#fff",
-                borderRadius: "8px",
-                padding: "10px 20px",
-                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                "&:hover": {
-                  background:
-                    "linear-gradient(90deg, #5a31a6 0%, #c8235b 100%)", // Gradient đậm hơn khi hover
-                },
-              }}
+            <GradientButton
             >
               Danh sách đơn hàng
-            </Button>
+            </GradientButton>
           </Link>
         </Stack>
 
@@ -313,6 +318,6 @@ const Wrapper = styled(Stack)({
 });
 
 const LabelWrapper = styled(Stack)({
-  background: "#F9F1E7",
+  background: "#CECECE",
   height: 55,
 });

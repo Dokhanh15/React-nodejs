@@ -16,16 +16,12 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useEffect, useMemo, useState } from "react";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "src/contexts/Cart";
 import { useUser } from "src/contexts/user";
 import { Category } from "src/types/Product";
 import logo from "../../assets/img/logo.png";
 
-interface HeaderProps {
-  onCategorySelect: (category: string | null) => void;
-  onSearch: (query: string) => void;
-}
 const GradientButton = styled(Button)(() => ({
   background: "linear-gradient(45deg, #FE6B8B 50%, white 90%)",
   backgroundSize: "200% 200%",
@@ -78,13 +74,13 @@ const MenuItemStyled = styled(MenuItem)(() => ({
   },
 }));
 
-const Header: React.FC<HeaderProps> = ({ onCategorySelect, onSearch }) => {
+const Header = ({ onCategorySelect, onSearch }) => {
   const { user, setUser } = useUser();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const { cart } = useCart();
-  const navigate =useNavigate()
+  const navigate = useNavigate()
 
   const handleLogout = () => {
     localStorage.removeItem("Token");
@@ -147,7 +143,7 @@ const Header: React.FC<HeaderProps> = ({ onCategorySelect, onSearch }) => {
           alignItems: "center",
         }}
       >
-         <Stack direction="row" spacing={15} sx={{ flexGrow: 1 }}>
+        <Stack direction="row" spacing={15} sx={{ flexGrow: 1 }}>
           <Link href="/" sx={{ textDecoration: "none" }}>
             <img src={logo} width={115} alt="Logo" />
           </Link>
@@ -183,7 +179,7 @@ const Header: React.FC<HeaderProps> = ({ onCategorySelect, onSearch }) => {
               <Link href="/carts">
                 <IconButton color="inherit">
                   <Badge badgeContent={cartQuantity} color="secondary">
-                    <ShoppingCartIcon />
+                    <ShoppingCartIcon sx={{ color: "black" }} />
                   </Badge>
                 </IconButton>
               </Link>
