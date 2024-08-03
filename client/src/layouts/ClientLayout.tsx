@@ -13,24 +13,16 @@ const ClientLayout = () => {
     getCartUser();
   }, [getCartUser]);
 
-  // Define the onCategorySelect and onSearch handlers
-  const handleCategorySelect = (category: string | null) => {
-    // Handle category selection
-    console.log("Category selected:", category);
-  };
-
-  const handleSearch = (query: string) => {
-    // Handle search query
-    console.log("Search query:", query);
-  };
+  
 
   return (
     <Stack>
       <CartProvider>
         <Header
-          onCategorySelect={handleCategorySelect}
-          onSearch={handleSearch}
+          onCategorySelect={undefined}
+          onSearch={undefined}
         />
+
         <Stack mt={14.5}>
           <Outlet />
         </Stack>

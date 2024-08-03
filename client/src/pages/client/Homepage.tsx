@@ -1,6 +1,6 @@
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { Button, Grid, Stack, Typography } from "@mui/material";
-import { styled } from '@mui/system';
+import { styled } from "@mui/system";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Header from "src/components/header/header";
@@ -10,28 +10,28 @@ import SnackbarAlert from "../../components/snackbar/Snackbar";
 import ListProduct from "./Listproducts";
 
 const PaginationButton = styled(Button)(() => ({
-  position: 'relative',
-  overflow: 'hidden',
-  padding: '3px',
-  minWidth: '40px',
-  borderRadius: '2px',
-  boxShadow: '2px 2px 5px rgba(0,0,0,0.2)',
-  backgroundColor: 'white',
-  color: 'black',
-  '&:hover': {
-    backgroundColor: 'grey.200',
+  position: "relative",
+  overflow: "hidden",
+  padding: "3px",
+  minWidth: "40px",
+  borderRadius: "2px",
+  boxShadow: "2px 2px 5px rgba(0,0,0,0.2)",
+  backgroundColor: "white",
+  color: "black",
+  "&:hover": {
+    backgroundColor: "grey.200",
   },
-  '&::after': {
+  "&::after": {
     content: '""',
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
-    left: '-100%',
-    width: '100%',
-    height: '2px',
-    backgroundColor: '#E63673',
-    transition: 'left 0.3s ease-out',
+    left: "-100%",
+    width: "100%",
+    height: "2px",
+    backgroundColor: "#E63673",
+    transition: "left 0.3s ease-out",
   },
-  '&:hover::after': {
+  "&:hover::after": {
     left: 0,
   },
 }));
@@ -42,11 +42,15 @@ function Homepage() {
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [productsPerPage] = useState<number>(10);
+  const [productsPerPage] = useState<number>(8);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [noResults, setNoResults] = useState<boolean>(false);
 
-  const getAllProducts = async (category: string | null = null, query: string = "") => {
+  const getAllProducts = async (
+    category: string | null = null,
+    query: string = ""
+  ) => {
     try {
       setLoading(true);
       setError("");
@@ -55,6 +59,7 @@ function Homepage() {
         params: { category, query },
       });
       setProducts(data);
+      setNoResults(data.length === 0); // Set noResults to true if no products are found
     } catch (error) {
       setError("Có lỗi xảy ra, vui lòng thử lại sau!");
       console.error(error);
@@ -84,7 +89,10 @@ function Homepage() {
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+  const currentProducts = products.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
   const totalPages = Math.max(1, Math.ceil(products.length / productsPerPage));
   const boundedCurrentPage = Math.min(Math.max(currentPage, 1), totalPages);
 
@@ -102,12 +110,12 @@ function Homepage() {
         key={1}
         onClick={() => paginate(1)}
         sx={{
-          color: 1 === boundedCurrentPage ? 'white' : 'black',
-          bgcolor: 1 === boundedCurrentPage ? 'black' : 'white',
-          fontWeight: 1 === boundedCurrentPage ? 'bold' : 'normal',
-          '&:hover': {
-            bgcolor: 1 === boundedCurrentPage ? 'black' : 'grey.200'
-          }
+          color: 1 === boundedCurrentPage ? "white" : "black",
+          bgcolor: 1 === boundedCurrentPage ? "black" : "white",
+          fontWeight: 1 === boundedCurrentPage ? "bold" : "normal",
+          "&:hover": {
+            bgcolor: 1 === boundedCurrentPage ? "black" : "grey.200",
+          },
         }}
       >
         1
@@ -115,7 +123,11 @@ function Homepage() {
     );
 
     if (boundedCurrentPage > 3) {
-      buttons.push(<span key="start-ellipsis"><MoreHorizIcon /></span>);
+      buttons.push(
+        <span key="start-ellipsis">
+          <MoreHorizIcon />
+        </span>
+      );
     }
 
     const startPage = Math.max(2, boundedCurrentPage - 1);
@@ -127,12 +139,12 @@ function Homepage() {
           key={number}
           onClick={() => paginate(number)}
           sx={{
-            color: number === boundedCurrentPage ? 'white' : 'black',
-            bgcolor: number === boundedCurrentPage ? 'black' : 'white',
-            fontWeight: number === boundedCurrentPage ? 'bold' : 'normal',
-            '&:hover': {
-              bgcolor: number === boundedCurrentPage ? 'black' : 'grey.200'
-            }
+            color: number === boundedCurrentPage ? "white" : "black",
+            bgcolor: number === boundedCurrentPage ? "black" : "white",
+            fontWeight: number === boundedCurrentPage ? "bold" : "normal",
+            "&:hover": {
+              bgcolor: number === boundedCurrentPage ? "black" : "grey.200",
+            },
           }}
         >
           {number}
@@ -141,7 +153,11 @@ function Homepage() {
     }
 
     if (boundedCurrentPage < totalPages - 2) {
-      buttons.push(<span key="end-ellipsis"><MoreHorizIcon /></span>);
+      buttons.push(
+        <span key="end-ellipsis">
+          <MoreHorizIcon />
+        </span>
+      );
     }
 
     buttons.push(
@@ -149,12 +165,12 @@ function Homepage() {
         key={totalPages}
         onClick={() => paginate(totalPages)}
         sx={{
-          color: totalPages === boundedCurrentPage ? 'white' : 'black',
-          bgcolor: totalPages === boundedCurrentPage ? 'black' : 'white',
-          fontWeight: totalPages === boundedCurrentPage ? 'bold' : 'normal',
-          '&:hover': {
-            bgcolor: totalPages === boundedCurrentPage ? 'black' : 'grey.200'
-          }
+          color: totalPages === boundedCurrentPage ? "white" : "black",
+          bgcolor: totalPages === boundedCurrentPage ? "black" : "white",
+          fontWeight: totalPages === boundedCurrentPage ? "bold" : "normal",
+          "&:hover": {
+            bgcolor: totalPages === boundedCurrentPage ? "black" : "grey.200",
+          },
         }}
       >
         {totalPages}
@@ -189,11 +205,13 @@ function Homepage() {
           justifyContent="center"
           sx={{ px: 4, py: 6 }}
         >
-          {currentProducts.map((product, index) => (
-            <Typography key={index}  style={{ textDecoration: "none" }}>
-              <ListProduct product={product} />
-            </Typography>
-          ))}
+          {noResults ? (
+            <Typography variant="h3">Không tìm thấy sản phẩm</Typography>
+          ) : (
+            currentProducts.map((product) => (
+              <ListProduct key={product._id} product={product} />
+            ))
+          )}
         </Stack>
 
         {totalPages > 1 && (

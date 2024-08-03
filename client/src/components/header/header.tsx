@@ -11,11 +11,12 @@ import {
   Stack,
   styled,
   Toolbar,
-  Typography
+  Typography,
+  Link
 } from "@mui/material";
 import axios from "axios";
 import { useEffect, useMemo, useState } from "react";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { useCart } from "src/contexts/Cart";
 import { useUser } from "src/contexts/user";
 import { Category } from "src/types/Product";
@@ -87,8 +88,10 @@ const Header: React.FC<HeaderProps> = ({ onCategorySelect, onSearch }) => {
 
   const handleLogout = () => {
     localStorage.removeItem("Token");
+    localStorage.removeItem("cart");
     setUser(null);
     navigate("/login")
+    window.location.reload();
   };
 
   const fetchCategories = async () => {
@@ -113,11 +116,10 @@ const Header: React.FC<HeaderProps> = ({ onCategorySelect, onSearch }) => {
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
-    // Nếu chuỗi tìm kiếm rỗng, gọi onSearch với chuỗi rỗng
-    if (event.target.value === "") {
-      onSearch("");
-    }
+
+    const newSearchQuery = event.target.value;
+    setSearchQuery(newSearchQuery);
+    onSearch(newSearchQuery);
   };
 
   const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -145,29 +147,18 @@ const Header: React.FC<HeaderProps> = ({ onCategorySelect, onSearch }) => {
           alignItems: "center",
         }}
       >
-        <Stack direction="row" spacing={15} sx={{ flexGrow: 1 }}>
-          <RouterLink to="/" style={{ textDecoration: "none" }}>
+         <Stack direction="row" spacing={15} sx={{ flexGrow: 1 }}>
+          <Link href="/" sx={{ textDecoration: "none" }}>
             <img src={logo} width={115} alt="Logo" />
-          </RouterLink>
+          </Link>
           <Stack direction="row" spacing={2} alignItems="center">
-            <RouterLink
-              to="/"
-              style={{ color: "black", textDecoration: "none" }}
-            >
-              Trang chủ
-            </RouterLink>
-            <Typography
-              onMouseEnter={handleCategoryClick}
-              sx={{
-                color: "black",
-                cursor: "pointer",
-                "&:hover": { borderBottom: "1px solid" },
-              }}
-            >
+            <Link href="/" color="black" underline="none" sx={{ "&:hover": { borderBottom: "1px solid" } }}>Trang chủ</Link>
+            <Link href="#" color="black" underline="none" onMouseEnter={handleCategoryClick} sx={{ "&:hover": { borderBottom: "1px solid" } }}>
               Danh mục
-            </Typography>
-          </Stack>
-        </Stack>
+            </Link>
+            <Link href="/product/liked" color="black" underline="none" sx={{ "&:hover": { borderBottom: "1px solid" } }}>Yêu thích</Link>
+          </Stack >
+        </Stack >
 
         <Stack direction="row" spacing={2} alignItems="center">
           <form onSubmit={handleSearchSubmit}>
@@ -182,20 +173,20 @@ const Header: React.FC<HeaderProps> = ({ onCategorySelect, onSearch }) => {
                 borderRadius: 10,
                 border: "1px solid #ccc",
                 bgcolor: "#fff",
-                "&:focus": { borderColor: "#aaa" },
+                ":focus-within": { borderColor: "pink", borderWidth: 2 }
               }}
               inputProps={{ "aria-label": "search" }}
             />
           </form>
           {user ? (
             <Stack direction="row" spacing={2} alignItems="center">
-              <RouterLink to="/carts">
+              <Link href="/carts">
                 <IconButton color="inherit">
                   <Badge badgeContent={cartQuantity} color="secondary">
                     <ShoppingCartIcon />
                   </Badge>
                 </IconButton>
-              </RouterLink>
+              </Link>
               <Typography color="black">Hi, {user.username}</Typography>
               <IconButton>
                 <AccountCircleIcon />
