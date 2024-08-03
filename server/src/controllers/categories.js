@@ -1,6 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import Category from "../models/CategoryModel";
 import ApiError from "../utils/ApiError";
+import Product from "../models/ProductModel";
 
 class CategoriesController {
   // GET /categories
@@ -12,17 +13,18 @@ class CategoriesController {
       next(error);
     }
   }
+  
   // GET /categories/:id
   async getCategoryDetail(req, res, next) {
     try {
-      const category = await Category.findById(req.params._id);
-
+      const category = await Category.findById(req.params.id);
       if (!category) throw new ApiError(404, "Category Not Found");
       res.status(StatusCodes.OK).json(category);
     } catch (error) {
       next(error);
     }
   }
+  
   // POST /categories
   async createCategory(req, res, next) {
     try {
@@ -35,35 +37,47 @@ class CategoriesController {
       next(error);
     }
   }
+  
   // PUT /categories/:id
   async updateCategory(req, res, next) {
     try {
       const category = await Category.findByIdAndUpdate(
-        req.params._id,
-        req.body
+        req.params.id,
+        req.body,
+        { new: true }
       );
       if (!category) throw new ApiError(404, "Category Not Found");
-      const updateCategory = await Category.findById(req.params._id);
       res.status(StatusCodes.OK).json({
         message: "Update Category Successfull",
-        data: updateCategory,
+        data: category,
       });
     } catch (error) {
       next(error);
     }
   }
+  
   // DELETE /categories/:id
-  async deleteCategory(req, res, next) {
+  async deleteCategory (req, res) {
     try {
-      const category = await Category.findByIdAndDelete(req.params._id);
-      if (!category) throw new ApiError(404, "Category Not Found");
-      res.status(StatusCodes.OK).json({
-        message: "Delete Category Done",
-      });
+      const categoryId = req.params.id;
+      const products = await Product.find({ category: categoryId });
+  
+      if (products.length > 0) {
+        return res.status(400).json({ message: 'Category has products and cannot be deleted' });
+      }
+  
+      const category = await Category.findByIdAndDelete(categoryId);
+  
+      if (!category) {
+        return res.status(404).json({ message: 'Category Not Found' });
+      }
+  
+      res.status(200).json({ message: 'Category deleted successfully' });
     } catch (error) {
-      next(error);
+      res.status(500).json({ message: error.message });
     }
-  }
+  };
+  
 }
 
 export default CategoriesController;

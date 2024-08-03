@@ -27,7 +27,7 @@ type ProductFormProps = {
 function ProductForm({ onSubmit, initialValues, isEdit }: ProductFormProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
-  const GradientButton = styled(Button)(({ theme }) => ({
+  const GradientButton = styled(Button)(() => ({
     background: 'linear-gradient(45deg, #FE6B8B 50%, white 90%)',
     backgroundSize: '200% 200%',
     border: 0,
@@ -79,12 +79,12 @@ function ProductForm({ onSubmit, initialValues, isEdit }: ProductFormProps) {
       onSubmit={onSubmit}
       validate={validate}
       initialValues={initialValues || { isShow: true }}
-      render={({ handleSubmit, form }) => (
-        
+      render={({ handleSubmit }) => (
+
         <form onSubmit={handleSubmit}>
-          <Typography variant="h3" textAlign={'center'} my={3}  gutterBottom>
-              {isEdit ? "Cập nhật sản phẩm" : "Thêm sản phẩm mới"}
-            </Typography>
+          <Typography variant="h3" textAlign={'center'} my={3} gutterBottom>
+            {isEdit ? "Cập nhật sản phẩm" : "Thêm sản phẩm mới"}
+          </Typography>
           <Stack>
             <Field
               name="title"
@@ -140,7 +140,7 @@ function ProductForm({ onSubmit, initialValues, isEdit }: ProductFormProps) {
                 <FormControlLabel
                   sx={{ margin: '5px' }}
                   control={<Checkbox {...input} />}
-                  label="Check box"
+                  label="Show product"
                 />
               )}
             />

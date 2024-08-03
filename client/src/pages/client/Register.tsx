@@ -60,7 +60,7 @@ const Register = () => {
     setSuccess("");
   };
 
-  const GradientButton = styled(Button)(({ theme }) => ({
+  const GradientButton = styled(Button)(() => ({
     background: 'linear-gradient(45deg, #FE6B8B 50%, white 90%)',
     backgroundSize: '200% 200%',
     border: 0,

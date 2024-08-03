@@ -1,4 +1,14 @@
-import { Avatar, Box, Button, Container, Grid, Link, styled, TextField, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  Container,
+  Grid,
+  Link,
+  styled,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -6,12 +16,16 @@ import axiosInstance from "./axiosInstance/axiosInstance";
 import SnackbarAlert from "../../components/snackbar/Snackbar";
 import Loading from "src/components/loading/loading";
 import { Users } from "src/types/user";
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { useUser } from "./userContext/userContext";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import { useUser } from "src/contexts/user";
 
 const Login = () => {
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<Users>();
-
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<Users>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -27,9 +41,9 @@ const Login = () => {
       setSuccess("Đăng nhập thành công!");
       console.log("Đăng nhập thành công:", response.data);
 
-      // Lưu token vào localStorage
       localStorage.setItem("Token", response.data.token);
-
+      setUser(response.data.user);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
       setUser(response.data.user); // Cập nhật trạng thái người dùng
 
       reset();
@@ -49,36 +63,36 @@ const Login = () => {
     setSuccess("");
   };
 
-  const GradientButton = styled(Button)(({ theme }) => ({
-    background: 'linear-gradient(45deg, #FE6B8B 50%, white 90%)',
-    backgroundSize: '200% 200%',
+  const GradientButton = styled(Button)(() => ({
+    background: "linear-gradient(45deg, #FE6B8B 50%, white 90%)",
+    backgroundSize: "200% 200%",
     border: 0,
     borderRadius: 3,
-    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-    color: 'white',
+    boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
+    color: "white",
     height: 48,
     width: 600,
-    marginTop: '20px',
-    padding: '0 30px',
-    transition: 'background-position 1s ease',
-    backgroundPosition: '0% 100%',
-    '&:hover': {
-      backgroundPosition: '200% 100%',
+    marginTop: "20px",
+    padding: "0 30px",
+    transition: "background-position 1s ease",
+    backgroundPosition: "0% 100%",
+    "&:hover": {
+      backgroundPosition: "200% 100%",
     },
   }));
 
   return (
-    <Container maxWidth="sm" >
+    <Container maxWidth="sm">
       <Loading isShow={loading} />
       <Box
         sx={{
           marginTop: 4,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
         }}
       >
-        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
           <LockOutlinedIcon />
         </Avatar>
 
@@ -88,7 +102,6 @@ const Login = () => {
 
         <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3 }}>
           <Grid container spacing={2}>
-
             <Grid item xs={12}>
               <TextField
                 fullWidth
@@ -103,7 +116,6 @@ const Login = () => {
                 })}
                 error={!!errors?.email?.message}
                 helperText={errors?.email?.message}
-
               />
             </Grid>
 
@@ -124,14 +136,11 @@ const Login = () => {
                 helperText={errors?.password?.message}
               />
             </Grid>
-
           </Grid>
-          <GradientButton type="submit">
-            Đăng nhập
-          </GradientButton>
+          <GradientButton type="submit">Đăng nhập</GradientButton>
           <Grid container justifyContent="flex-end">
             <Grid item>
-              <Link href="/register" variant="body2" sx={{ lineHeight: '4' }}>
+              <Link href="/register" variant="body2" sx={{ lineHeight: "4" }}>
                 Chưa có tài khoản? Đăng ký
               </Link>
             </Grid>
@@ -155,4 +164,3 @@ const Login = () => {
   );
 };
 export default Login;
-

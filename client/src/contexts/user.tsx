@@ -33,9 +33,12 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
             headers: { Authorization: `Bearer ${token}` }
           });
           setUser(response.data);
+        } else {
+          setUser(null);
         }
       } catch (error) {
         console.error('Failed to fetch user:', error);
+        setUser(null);
       }
     };
     fetchUser();
